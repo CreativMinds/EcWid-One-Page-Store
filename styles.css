@@ -1,0 +1,14 @@
+.floatfix:before,
+.floatfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.floatfix:after {
+    clear: both;
+}
+
+div.centered{
+	margin: 0 auto;
+	width:900px;
+}

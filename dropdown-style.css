@@ -1,0 +1,11 @@
+ul.dropdown li {
+ padding:10px;
+ background: #eee;
+}
+ul.dropdown ul{
+	width:150px;
+}
+
+ul.dropdown ul *.dir{
+	border-bottom:1px dashed #222;
+}
