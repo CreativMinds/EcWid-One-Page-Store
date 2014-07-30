@@ -14,7 +14,21 @@ div.prod-image img{
 div.prod-details{
 	width:30%;
 	float: right;
+	
+	background:#bee4dc;
+	padding:20px;
+	box-sizing: border-box;
 }
+
+div.prod-details .title{
+	font-size:20px;
+}
+
+div.prod-details .price{
+	font-size:20px;
+	color:#e7275c;
+}
+
 div.prod-description{
 	width:100%;
 	clear: both;

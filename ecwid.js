@@ -241,8 +241,9 @@ var EcWid = {
 		this.loadData('product','EcWid.getProduct',function(){
 			
 			
-			var template = '',
-				el;
+			var template = '',		// базовый темплейт карточки товара
+				el, ul, li,			// dom контейнеры
+				key;				// просто индекс
 			
 			// создадим базовый шаблон и добавим его в документ
 			template += '<div class="prod-image"></div>';
@@ -260,7 +261,34 @@ var EcWid = {
 			
 			// добавим детали товара
 			el = document.querySelector('#' + this.windowSelector + ' .prod-details');
-			el.innerHTML = 'Стоимость: ' + this.product.price;
+				
+				// цена
+				el.innerHTML = '<span class="title">Стоимость:</span> <span class="price">$' + 
+							this.product.price + '</span>';
+			
+				// аттрибуты
+				if(this.product.attributes.length > 0){
+
+					ul = document.createElement('ul');
+					ul.className = 'attributes';
+
+					for(key in this.product.attributes){
+						
+						li = document.createElement('li');
+						
+						li.innerHTML = this.product.attributes[key].name + ': ' + this.product.attributes[key].value;
+						ul.appendChild(li);
+					}
+					
+					el.appendChild(ul);			
+				}
+				
+				// опции
+				if(this.product.options.length > 0){
+					
+					
+				}
+				
 			
 			// добавим полное описание
 			el = document.querySelector('#' + this.windowSelector + ' .prod-description');
