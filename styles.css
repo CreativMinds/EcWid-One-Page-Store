@@ -12,3 +12,11 @@ div.centered{
 	margin: 0 auto;
 	width:900px;
 }
+
+table.ecwidMainTable{
+	width: 100%;
+}
+table.ecwidMainTable tr td{
+	padding:0px;
+	margin:0px;
+}

@@ -11,7 +11,9 @@ var EcWid = {
 												// инициируется при запуске, в init()
 	"goodsWindow": null,						// хранит dom объекта с листингом товаров заданной категории
 												// или без категории. В общем просто контейнер списка товаров
-	"productWindow": null						// хранит dom обьекта с описанием товара	
+	"productWindow": null,						// хранит dom обьекта с описанием товара
+	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
+	"menuContainer": null						// хранит dom обекта где выводятся товары или страница товара
 };
 
 	EcWid.generateUniqId = function(){
@@ -103,6 +105,9 @@ var EcWid = {
 	EcWid.init = function(){
 	
 		
+		// создадим основной фрейм окна, где все будет размещаться
+		this.createMainFrame();
+		
 		// инициируем главное окно магазина, там где будет размещаться весь интерфейс
 		this.window = document.getElementById( this.windowSelector );
 		
@@ -114,6 +119,28 @@ var EcWid = {
 		
 		// добавим слежение за кликами по ссылкам
 		this.eventListenersOn();
+	};
+	
+	EcWid.createMainFrame = function(){
+	
+		
+		/* создадим основной фрейм окна, где все будет размещаться */
+		
+		var mainHolder = document.getElementById( this.windowSelector );
+			mainHolder.className = 'centered floatfix';
+			
+		mainHolder.innerHTML = '<table class="ecwidMainTable">'+
+									'<tr>'+
+										'<td id="mainMenu"></td>'+
+									'</tr>'+
+									'<tr>'+
+										'<td id="mainContent"></td>'+
+									'</tr>'+
+								'</table>';
+		
+		// закешируем вышесозданные элементы меню и окно контента	
+		this.menuContainer = mainHolder.querySelector('#mainMenu');					
+		this.contentContainer = mainHolder.querySelector('#mainContent');					
 	};
 	
 	EcWid.eventListenersOn = function(){
@@ -197,6 +224,9 @@ var EcWid = {
 			}
 		}		
 		
+		// очистим основное окно от содержимого
+		this.contentContainer.innerHTML = '';
+		
 		// создаем окно товара, если оно не создано
 		if(this.productWindow === null){
 			
@@ -220,7 +250,7 @@ var EcWid = {
 			template += '<div class="prod-description"></div>'; 
 			
 			this.productWindow.innerHTML = template;
-			this.window.appendChild(this.productWindow);
+			this.contentContainer.appendChild(this.productWindow);
 			
 			// наполним шаблон
 			
@@ -263,7 +293,10 @@ var EcWid = {
 				params[key] = paramsObj[key];
 			}
 		}
-		
+
+		// очистим основное окно от содержимого
+		this.contentContainer.innerHTML = '';
+				
 		// получим товары
 		this.loadData('products','EcWid.getProducts',function(){
 			
@@ -305,7 +338,7 @@ var EcWid = {
 				}
 				
 			// поместим в документ
-				this.window.appendChild(this.goodsWindow);			
+				this.contentContainer.appendChild(this.goodsWindow);			
 		},params);
 		
 	};
@@ -327,12 +360,12 @@ var EcWid = {
 			li, ul,
 			key;
 		
-		// создадим главный контейнер меню, и поместим его в главное окно EcWid
+		// создадим главное меню, и поместим его в контейнер главного меню
 			mainContainer = document.createElement('ul');
 			mainContainer.id = 'dropdown-nav';
 			mainContainer.className = 'dropdown';
 			
-			this.window.appendChild(mainContainer);
+			this.menuContainer.appendChild(mainContainer);
 			
 		// получим из необработанного массива с категориями более структурированные данные
 		for(key in this.categories){
