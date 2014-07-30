@@ -2,9 +2,16 @@ var EcWid = {
 
 	"categories": [],							// все категории, массив обьектов
 	"products": [],								// все товары, массив обьектов
+	"product": {},								// информация о текущем выбранном продукте
 	"windowSelector": "ecwid-shop",				// там, где будет размещаться весь интерфейс магазина, это может быть div
 	"shopId": 5266003,							// id магазина
-	"apiUrl": "http://appdev.ecwid.com/api/v1" 	// url ecwid api
+	"apiUrl": "http://appdev.ecwid.com/api/v1",	// url ecwid api
+
+	"window": null,								// хранит dom обьект document.getElementById( windowSelector )
+												// инициируется при запуске, в init()
+	"goodsWindow": null,						// хранит dom объекта с листингом товаров заданной категории
+												// или без категории. В общем просто контейнер списка товаров
+	"productWindow": null						// хранит dom обьекта с описанием товара	
 };
 
 	EcWid.generateUniqId = function(){
@@ -49,7 +56,10 @@ var EcWid = {
 			
 			for(key in params){
 				
-				paramString += '&' + key + '=' + params[key];
+				if(params[key] !== null){
+					paramString += '&' + key + '=' + params[key];
+				}
+				
 			}
 		}
 		
@@ -73,15 +83,21 @@ var EcWid = {
 	
 	
 	EcWid.getCategories = function(categories){
-		// получение всего списка категорий
+		// jsonp функция,получение всего списка категорий
 		
 		this.categories = categories;
 	};
 
 	EcWid.getProducts = function(products){
-		// получение всего списка товаров
+		// jsonp функция, получение всего списка товаров
 		
 		this.products = products;
+	};	
+	
+	EcWid.getProduct = function(product){
+		// jsonp функция, получение информации о товаре
+		
+		this.product = product;
 	};	
 	
 	EcWid.init = function(){
@@ -93,31 +109,204 @@ var EcWid = {
 		// загрузим категории и создадим на их основе главное меню
 		this.loadData('categories','EcWid.getCategories',this.gerenateMainMenu);
 		
-		// загрузим и отобразим список товаров
-		this.loadData('products','EcWid.getProducts',this.showGoods);
+		// отобразим список товаров
+		this.showGoods();
+		
+		// добавим слежение за кликами по ссылкам
+		this.eventListenersOn();
 	};
 	
+	EcWid.eventListenersOn = function(){
+		
+		
+		// инициируем слежения за событиями
+		var traversingBounded = this.traversing.bind(this);
+		
+		window.addEventListener('hashchange', traversingBounded, false);	
+	};
 	
-	EcWid.showGoods = function(){
+	EcWid.traversing = function(){
+	
+		
+		// ф-я отвечает за перемещение пользователя по магазину, отслеживая хэш теги в url
+		
+		var controller,				// контроллер, это например product в строке url "#!/~/products/..."
+			params = {},			// обьект с параметрами вида {id: 123, offset: 1, sortby: "date"}
+									// генерируем его динамически путем парсинга строки идущей после
+									// контроллера, строка вида /prodicts/id=5&sortby=date где products - контроллер
+			key;
+		
+		console.log('travers...');	
+		// отслеживаем только хэш теги начинающиеся с "#!/~/"
+		if( /^(#!\/~\/)/.test(location.hash) === false ) return;
+		
+		// узнаем контроллер
+		try{
+			controller = /(\/\w+\/)/.exec(location.hash)[0].replace(/\//g,'');
+		}catch(e){
+			return;
+		}
+		console.log(controller);
+		// узнаем параметры, пропарсив то что идет после /products/... например /prodicts/id=5&sortby=date
+		paramsRawArr = location.hash.substr(location.hash.lastIndexOf('/')+1).split('&');
+		
+		if(paramsRawArr[0].indexOf('=') == -1){
+			params = {};
+		}else{
+			
+			for(key in paramsRawArr){
+				
+				params[ paramsRawArr[key].split('=')[0] ] = paramsRawArr[key].split('=')[1];
+			}
+		}
+		
+		// предпримем действие
+		this.handleTraversingAction(controller, params);
+			
+	};
+	
+	EcWid.handleTraversingAction = function(controller, params){
+		
+		
+		// предпримем действие в заивисимости от того какой запрос отправил пользователь
+		
+		// пользователь запросил категорию
+		if(controller === 'category'){
+			console.log('show goods...');
+			this.showGoods(params);
+		}
+		
+		// пользователь запросил товар
+		if(controller === 'product'){
+			console.log('show product...');
+			this.showProduct(params);
+		}
+	}
+	
+	EcWid.showProduct = function(paramsObj){
+	
+	
+		/* отображение информации по товару */
+		
+		var params = {id: null};
+
+		// перезапишем настройки если они были переданы
+		if(paramsObj){
+			for(key in paramsObj){
+				params[key] = paramsObj[key];
+			}
+		}		
+		
+		// создаем окно товара, если оно не создано
+		if(this.productWindow === null){
+			
+			this.productWindow = document.createElement('div');
+			this.productWindow.className = 'product-window floatfix';
+			
+		}else{
+			this.productWindow.innerHTML = '';
+		}
+		
+		// загрузим данные о товаре и сделаем вывод на страницу/окно товара
+		this.loadData('product','EcWid.getProduct',function(){
+			
+			
+			var template = '',
+				el;
+			
+			// создадим базовый шаблон и добавим его в документ
+			template += '<div class="prod-image"></div>';
+			template += '<div class="prod-details"></div>';
+			template += '<div class="prod-description"></div>'; 
+			
+			this.productWindow.innerHTML = template;
+			this.window.appendChild(this.productWindow);
+			
+			// наполним шаблон
+			
+			// добавим изображение
+			el = document.querySelector('#' + this.windowSelector + ' .prod-image');
+			el.innerHTML = '<img src=' + this.product.imageUrl + ' />';
+			
+			// добавим детали товара
+			el = document.querySelector('#' + this.windowSelector + ' .prod-details');
+			el.innerHTML = 'Стоимость: ' + this.product.price;
+			
+			// добавим полное описание
+			el = document.querySelector('#' + this.windowSelector + ' .prod-description');
+			el.innerHTML = this.product.description;
+				
+		},params);
+		
+	};
+	
+	EcWid.showGoods = function(paramsObj){
 	
 	
 		/* Отображение списка товаров 
 			
 			Сгенерируем блок с товарами (UL), после чего сгеренируем каждый товар (LI), добавим товары в блок
 			и затем вставим его в главное окно нашего магазина EcWid.window
+			
+			paramsObj - обьект с настройками, если не переданы, то будут использоваться по умолчанию
 		*/
 		
-		var goodsWindow;		// глвный элемент, который будет отображать список товаров
-
+		var	params = {			// настройки по умолчанию
+				limit: null,				// число результатов в выдаче, null - нет ограничения
+				category: null				// id категории, null - все товары
+			},
+			key;
+		
+		// перезапишем настройки если они были переданы
+		if(paramsObj){
+			for(key in paramsObj){
+				params[key] = paramsObj[key];
+			}
+		}
+		
+		// получим товары
+		this.loadData('products','EcWid.getProducts',function(){
 			
-		// генерация элемента, который будет отображать список товаров
-		goodsWindow = document.createElement('ul');
-		
-		// получим данные о товарах
-		
-		// создадим товары
-		
-		// поместим в документ
+			var li, a, img,
+				key;
+			
+			// создадим контейнер для товаров (UL), если он не создан ранее			
+			if(this.goodsWindow === null){
+				
+				this.goodsWindow = document.createElement('ul');
+				this.goodsWindow.className = 'goods floatfix';	
+						
+			}else{
+				console.log('clean');
+				this.goodsWindow.innerHTML = '';
+			}
+			
+			// создадим товары
+				for(key in this.products){
+					
+					li = document.createElement('li');
+					a = document.createElement('a');
+					img = document.createElement('img');
+					
+					if(this.products[key].thumbnailUrl){
+						img.src = this.products[key].thumbnailUrl;
+					}else{
+						img.className = 'noimage';
+					}
+					
+					a.href = '#!/~/product/id=' + this.products[key].id;
+					
+					a.appendChild(img);
+					
+					a.innerHTML += this.products[key].name;
+					
+					li.appendChild(a);									
+					this.goodsWindow.appendChild(li);	
+				}
+				
+			// поместим в документ
+				this.window.appendChild(this.goodsWindow);			
+		},params);
 		
 	};
 	
@@ -164,7 +353,7 @@ var EcWid = {
 			
 			li = document.createElement('li');
 			li.setAttribute('data-categoryId',EcWid.categories[key].id);
-			li.innerHTML = '<a href="#'+EcWid.categories[key].id+'">'+EcWid.categories[key].name+'</a>';
+			li.innerHTML = '<a href="#!/~/category/category='+EcWid.categories[key].id+'">'+EcWid.categories[key].name+'</a>';
 			
 			liCategories[EcWid.categories[key].id] = li;
 		}

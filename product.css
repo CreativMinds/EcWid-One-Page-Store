@@ -1,0 +1,21 @@
+div.product-window{
+	width: 100%;
+}
+div.prod-image{
+	width:70%;
+	float: left;
+	text-align: center;
+}
+
+div.prod-image img{
+	max-width:90%;
+}
+
+div.prod-details{
+	width:30%;
+	float: right;
+}
+div.prod-description{
+	width:100%;
+	clear: both;
+}
