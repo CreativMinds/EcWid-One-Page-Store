@@ -298,6 +298,14 @@ var EcWid = {
 					}
 				}
 				
+				// кол-во
+				el.innerHTML += '<div><span class="title">Quantity:</span>' +
+									'<input class="quantity" type="number" name="quantity" value="1" min="1">'+
+								'</div>';
+								
+				// кнопка положить в коризну
+				el.innerHTML += '<div class="cart-btn"><button class="btn btn-default">В корзину</button></div>';
+				
 			
 			// добавим полное описание
 			el = document.querySelector('#' + this.windowSelector + ' .prod-description');
