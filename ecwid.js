@@ -19,7 +19,8 @@ var EcWid = {
 												// или без категории. В общем просто контейнер списка товаров
 	"productWindow": null,						// хранит dom обьекта с описанием товара
 	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
-	"menuContainer": null						// хранит dom обекта где выводятся товары или страница товара
+	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
+	"cart": []									// корзина, хранит обекты с описанием товаров
 };
 
 	EcWid.generateUniqId = function(){
@@ -249,7 +250,8 @@ var EcWid = {
 			
 			var template = '',		// базовый темплейт карточки товара
 				el, ul, li,			// dom контейнеры
-				key;				// просто индекс
+				key,				// просто индекс
+				addToCartbounded = this.addToCart.bind(this);	// привязанная функция для event listener 
 			
 			// создадим базовый шаблон и добавим его в документ
 			template += '<div class="prod-image"></div>';
@@ -304,8 +306,12 @@ var EcWid = {
 								'</div>';
 								
 				// кнопка положить в коризну
-				el.innerHTML += '<div class="cart-btn"><button class="btn btn-default">В корзину</button></div>';
+				el.innerHTML += '<div class="cart-btn" id="cart-btn">' +
+								'<button class="btn btn-default">В корзину</button></div>';
 				
+				// привяжем события напрямую на обьекты не создавая лишних переменных reference
+				// чтобы при удалении dom событие также было удалено
+				document.getElementById('cart-btn').addEventListener('click', addToCartbounded, false);
 			
 			// добавим полное описание
 			el = document.querySelector('#' + this.windowSelector + ' .prod-description');
@@ -313,6 +319,62 @@ var EcWid = {
 				
 		},params);
 		
+	};
+	
+	EcWid.addToCart = function(){
+	
+		
+		// добавление товара в корзину
+		var product = {},
+			optionContainers,			// div элементы в которых содержатся input / select и прочие элементы
+										// со значениями опций.
+			l, key, i,
+			optionType, optionName, optionValue;							
+		
+		product.id = this.product.id;
+		product.options = [];	
+		
+		// узнаем какие опции были выбраны
+		optionContainers = document.querySelectorAll('.prod-options');
+		l = optionContainers.length;
+		
+		for(i = 0; i < l; i++){
+			
+			optionType = optionContainers[i].getAttribute('data-option-type');
+			optionName = optionContainers[i].getAttribute('data-option-name');
+			
+			optionValue = this.parseOptionValue(optionContainers[i], optionType, optionName);
+			
+			if(optionValue !== undefined){
+				product.options.push({
+							optionName: optionName, 
+							optionValue: optionValue
+				});
+			}
+		}
+		
+		this.cart.push(product);
+	};
+	
+	EcWid.parseOptionValue = function(container, optionType, optionName){
+	
+		
+		// пропарсим dom контейнер который хранит select/input и другие form элементы, в которых пользователь
+		// на странице товара указал нужные ему данные, выбрал нужные ему опции
+
+		if(optionType === 'RADIO'){
+		
+			try{
+				return container.querySelector('[name="'+optionName+'"]:checked').value;
+			}catch(e){}	
+		}	
+
+		if(optionType === 'SELECT'){
+
+			try{
+				return container.querySelector('[name="'+optionName+'"]').value;
+			}catch(e){}	
+		}
 	};
 	
 	EcWid.genOptionHtmlView = function(optionObj){
@@ -324,7 +386,10 @@ var EcWid = {
 			checked = '',			// является ли элемент выбранным по умолчанию, только для radio и selected
 			choice;				// текущий обьект из массива optionObj.choices
 			
-		template = '<div class="prod-options" data-required="'+ optionObj.required +'">';
+		template = '<div class="prod-options" data-option-name="' + optionObj.name + 
+											'" data-option-type="' + optionObj.type + 
+											'" data-option-required="'+ optionObj.required +'">';
+											
 		template += '<span class=title>' + optionObj.name + '</span> <br />';
 		
 		if(optionObj.type === 'RADIO'){
