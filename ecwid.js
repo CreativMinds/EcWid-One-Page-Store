@@ -20,14 +20,19 @@ var EcWid = {
 	"productWindow": null,						// хранит dom обьекта с описанием товара
 	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
 	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
-	"cart": []									// корзина, хранит обекты с описанием товаров
+	"cart": [],									// корзина, хранит обекты с описанием товаров
+	"domUid": 1									// uid для генерации уникальных dom id 
 };
 
 	EcWid.generateUniqId = function(){
 		
 		
 		/* генерация уникального id для html элементов */
-		
+
+		this.domUid++;
+		return 'ecwid-uid-' + this.domUid;
+
+/*		сложный метод		
 	    var d = new Date().getTime();
 	    var uuid = 'ecwid-xxxx-xxxx-yxxx-xxxxx'.replace(/[xy]/g, function(c) {
 	        var r = (d + Math.random()*16)%16 | 0;
@@ -36,6 +41,7 @@ var EcWid = {
 	    });
 		
 	    return uuid;
+*/
 	};
 	
 	EcWid.loadData = function(controller, jpCallback, callback, params){
@@ -393,10 +399,11 @@ var EcWid = {
 	EcWid.genOptionHtmlView = function(optionObj){
 	
 		
-		// генерация html view опций для вставки в карточку товара	
+		// генерация html view блоков с опциями товара для вставки в карточку товара	
 		var template,
-			key,
-			checked = '',			// является ли элемент выбранным по умолчанию, только для radio и selected
+			key, 
+			uid,
+			checked = '',		// является ли элемент выбранным по умолчанию, только для radio и selected
 			choice;				// текущий обьект из массива optionObj.choices
 			
 		template = '<div class="prod-options" data-option-name="' + optionObj.name + 
@@ -418,11 +425,13 @@ var EcWid = {
 				}
 				
 				// сгенерируем темплейт
-				template += '<input type="radio" name="' + 
+				uid = this.generateUniqId();
+				template += '<input type="radio" id="'+ uid +'" name="' + 
 								optionObj.name + '" value="' + 
 								choice.text + '" data-price-modifier-type="' + 
 								choice.priceModifierType + '" data-price-modifier="' + 
-								choice.priceModifier + '" ' + checked + ' /> ' + choice.text + '<br />';
+								choice.priceModifier + '" ' + checked + ' />'+
+								' <label for="'+ uid +'">' + choice.text + '</label><br />';
 			}
 		
 			template += '</div>';
