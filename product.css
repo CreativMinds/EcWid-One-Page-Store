@@ -66,3 +66,7 @@ div.cart-btn{
 	border-top: 1px solid;
 	margin-top: 25px;	
 }
+#go-to-cart-btn{
+	display: none;
+	margin:0 auto;
+}

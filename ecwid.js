@@ -305,13 +305,16 @@ var EcWid = {
 									'<input class="quantity" type="number" name="quantity" value="1" min="1">'+
 								'</div>';
 								
-				// кнопка положить в коризну
-				el.innerHTML += '<div class="cart-btn" id="cart-btn">' +
-								'<button class="btn btn-default">В корзину</button></div>';
+				// кнопки: "Положить в корзину", "Перейти в корзину"
+ 				el.innerHTML += '<div class="cart-btn">' +
+								'<button class="btn btn-default" id="put-in-cart-btn">В корзину</button>'+
+								'<button class="btn btn-default" id="go-to-cart-btn">Перейти в Коризину</button>'+
+								'</div>';
 				
+								
 				// привяжем события напрямую на обьекты не создавая лишних переменных reference
 				// чтобы при удалении dom событие также было удалено
-				document.getElementById('cart-btn').addEventListener('click', addToCartbounded, false);
+				document.getElementById('put-in-cart-btn').addEventListener('click', addToCartbounded, false);
 			
 			// добавим полное описание
 			el = document.querySelector('#' + this.windowSelector + ' .prod-description');
@@ -331,6 +334,7 @@ var EcWid = {
 			l, key, i,
 			optionType, optionName, optionValue;							
 		
+		// запишем базовую информацию о товаре
 		product.id = this.product.id;
 		product.options = [];	
 		
@@ -353,7 +357,16 @@ var EcWid = {
 			}
 		}
 		
+		// узнаем заказанное кол-во
+		product.quantity = document.querySelector('.prod-details [name="quantity"]').value;
+		
+		// положим товар в корзину
 		this.cart.push(product);
+		
+		// скорректируем UI
+		document.getElementById('go-to-cart-btn').innerHTML = 'Товар добавлен<br><b>Перейти в Корзину</b>';
+		document.getElementById('go-to-cart-btn').style.display = 'block';
+		document.getElementById('put-in-cart-btn').style.display = 'none';
 	};
 	
 	EcWid.parseOptionValue = function(container, optionType, optionName){
