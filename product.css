@@ -21,15 +21,35 @@ div.prod-details{
 }
 
 div.prod-details .title{
-	font-size:20px;
+	font-size:16px;
+	line-height:2;
+	font-weight: bold;
 }
 
 div.prod-details .price{
-	font-size:20px;
+	font-size:16px;
+	line-height:2;
+	font-weight: bold;
 	color:#e7275c;
 }
 
 div.prod-description{
 	width:100%;
 	clear: both;
+}
+
+div.prod-options{
+	line-height:1.5;
+	padding-bottom:15px;
+}
+div.prod-options span.title{
+	font-size:16px;
+	line-height:2;
+	font-weight: bold;
+}
+
+ul.prod-attributes{
+	margin:0px;
+	padding:10px;
+	padding-left:20px;
 }

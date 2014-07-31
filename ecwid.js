@@ -1,3 +1,9 @@
+/*
+
+	добавить отображение опций товара в EcWid.showProduct
+
+*/
+
 var EcWid = {
 
 	"categories": [],							// все категории, массив обьектов
@@ -263,14 +269,14 @@ var EcWid = {
 			el = document.querySelector('#' + this.windowSelector + ' .prod-details');
 				
 				// цена
-				el.innerHTML = '<span class="title">Стоимость:</span> <span class="price">$' + 
+				el.innerHTML = '<span class="title">Price:</span> <span class="price">$' + 
 							this.product.price + '</span>';
 			
 				// аттрибуты
 				if(this.product.attributes.length > 0){
 
 					ul = document.createElement('ul');
-					ul.className = 'attributes';
+					ul.className = 'prod-attributes';
 
 					for(key in this.product.attributes){
 						
@@ -286,7 +292,10 @@ var EcWid = {
 				// опции
 				if(this.product.options.length > 0){
 					
-					
+					for(key in this.product.options){
+						 	
+						el.innerHTML += this.genOptionHtmlView(this.product.options[key]);
+					}
 				}
 				
 			
@@ -296,6 +305,76 @@ var EcWid = {
 				
 		},params);
 		
+	};
+	
+	EcWid.genOptionHtmlView = function(optionObj){
+	
+		
+		// генерация html view опций для вставки в карточку товара	
+		var template,
+			key,
+			checked = '',			// является ли элемент выбранным по умолчанию, только для radio и selected
+			choice;				// текущий обьект из массива optionObj.choices
+			
+		template = '<div class="prod-options" data-required="'+ optionObj.required +'">';
+		template += '<span class=title>' + optionObj.name + '</span> <br />';
+		
+		if(optionObj.type === 'RADIO'){
+			
+			for(key in optionObj.choices){
+				
+				choice = optionObj.choices[key];
+				
+				// установим дефолтное значение только если опция обязательна
+				if(optionObj.required){
+				
+					if(optionObj.defaultChoice === key) checked = 'checked'; else checked = '';
+				}
+				
+				// сгенерируем темплейт
+				template += '<input type="radio" name="' + 
+								optionObj.name + '" value="' + 
+								choice.text + '" data-price-modifier-type="' + 
+								choice.priceModifierType + '" data-price-modifier="' + 
+								choice.priceModifier + '" ' + checked + ' /> ' + choice.text + '<br />';
+			}
+		
+			template += '</div>';
+
+			return template;
+		}
+
+		if(optionObj.type === 'SELECT'){
+			
+			template += '<select name="'+ optionObj.name +'">';
+			
+			if(!optionObj.required){
+				
+				template += '<option value=null>-----</option>';
+			}
+			
+			for(key in optionObj.choices){
+				
+				choice = optionObj.choices[key];
+				
+				// установим дефолтное значение только если опция обязательна
+				if(optionObj.required){
+				
+					if(optionObj.defaultChoice === key) checked = 'selected'; else checked = '';
+				}
+				
+				// сгенерируем темплейт
+				template += '<option value="' + choice.text + '" data-price-modifier-type="' + 
+								choice.priceModifierType + '" data-price-modifier="' + 
+								choice.priceModifier + '" ' + checked + ' > ' + choice.text + '</option>';
+			}
+			
+			template += '</select>';
+		
+			template += '</div>';
+
+			return template;
+		}
 	};
 	
 	EcWid.showGoods = function(paramsObj){
