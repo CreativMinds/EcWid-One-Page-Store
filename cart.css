@@ -1,0 +1,8 @@
+div.cart-window{
+	width: 100%;
+}
+
+table.cart tr td img.cartItemPhoto{
+	max-width:100px;
+	float: left;
+}

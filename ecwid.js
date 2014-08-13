@@ -1,13 +1,13 @@
 /*
 
-	добавить отображение опций товара в EcWid.showProduct
+	Страница корзины
 
 */
 
 var EcWid = {
 
 	"categories": [],							// все категории, массив обьектов
-	"products": [],								// все товары, массив обьектов
+	"products": [],								// все товары выбранной категории, массив обьектов
 	"product": {},								// информация о текущем выбранном продукте
 	"windowSelector": "ecwid-shop",				// там, где будет размещаться весь интерфейс магазина, это может быть div
 	"shopId": 5266003,							// id магазина
@@ -18,6 +18,7 @@ var EcWid = {
 	"goodsWindow": null,						// хранит dom объекта с листингом товаров заданной категории
 												// или без категории. В общем просто контейнер списка товаров
 	"productWindow": null,						// хранит dom обьекта с описанием товара
+	"cartWindow": null,							// по аналогии с productWindow
 	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
 	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
 	"cart": [],									// корзина, хранит обекты с описанием товаров
@@ -176,7 +177,7 @@ var EcWid = {
 									// контроллера, строка вида /prodicts/id=5&sortby=date где products - контроллер
 			key;
 		
-		console.log('travers...');	
+			
 		// отслеживаем только хэш теги начинающиеся с "#!/~/"
 		if( /^(#!\/~\/)/.test(location.hash) === false ) return;
 		
@@ -186,7 +187,7 @@ var EcWid = {
 		}catch(e){
 			return;
 		}
-		console.log(controller);
+		
 		// узнаем параметры, пропарсив то что идет после /products/... например /prodicts/id=5&sortby=date
 		paramsRawArr = location.hash.substr(location.hash.lastIndexOf('/')+1).split('&');
 		
@@ -209,17 +210,24 @@ var EcWid = {
 		
 		
 		// предпримем действие в заивисимости от того какой запрос отправил пользователь
+
 		
 		// пользователь запросил категорию
 		if(controller === 'category'){
-			console.log('show goods...');
+			
 			this.showGoods(params);
 		}
 		
 		// пользователь запросил товар
 		if(controller === 'product'){
-			console.log('show product...');
+			
 			this.showProduct(params);
+		}
+
+		// пользователь перешел в корзину
+		if(controller === 'cart'){
+			
+			this.showCart();
 		}
 	}
 	
@@ -314,7 +322,8 @@ var EcWid = {
 				// кнопки: "Положить в корзину", "Перейти в корзину"
  				el.innerHTML += '<div class="cart-btn">' +
 								'<button class="btn btn-default" id="put-in-cart-btn">В корзину</button>'+
-								'<button class="btn btn-default" id="go-to-cart-btn">Перейти в Коризину</button>'+
+								'<a href="#!/~/cart/"><button class="btn btn-default" id="go-to-cart-btn">'+
+								'Перейти в Коризину</button></a>'+
 								'</div>';
 				
 								
@@ -330,6 +339,139 @@ var EcWid = {
 		
 	};
 	
+	
+	
+	EcWid.showCart = function(){
+	
+	
+		/* отображение корзины с товарами */	
+		
+		var mainTable,						// таблица с содержимым корзины
+			cartItem,						// обьект в корзине с описанием продукта (id продукта, заказанное кол-во)
+											// опции продукта
+			product,						// продукт взятый из this.products, содержит все данные о товаре
+			template,						// шаблон таблицы mainTable
+			key, n,
+			optionsHtml,
+			deleteButtons,
+			cartItemDomId,
+			el;
+			
+		
+		// очистим основное окно от содержимого
+		this.contentContainer.innerHTML = '';
+		
+		// создаем окно корзины, если оно не создано
+		this.cartWindow = document.createElement('div');
+		this.cartWindow.className = 'cart-window floatfix';
+			
+		// создадим основную таблицу где будет отображаться список товаров
+		mainTable = document.createElement('table');
+		mainTable.className = 'table table-stripped cart';
+		mainTable.innerHTML = '<tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Итого</th><th></th></tr>';
+		
+		// внесем в таблицу записи о товарах
+		for(key in this.cart){
+			
+			// какой товар добавлен в корзину?
+			cartItem = this.cart[key];
+			
+			// получим подробные данные о товаре
+			//product = _.findWhere(EcWid.allProducts, {id: cartItem.id});
+			product = cartItem.baseProduct;
+			
+			// добавим запись в таблицу
+			
+			// опишем темплейт
+			template = '';			
+			template += '<tr id="_item_product_id_">'+
+							'<td>'+
+								'<img src="_item_photo_" class="cartItemPhoto" />'+
+								'<b>_item_name_</b><br />'+
+								'_item_options_'+
+							'</td>'+
+							'<td>_item_price_</td>'+
+							'<td>_item_quantity_</td>'+
+							'<td>_item_total_price_</td>'+
+							'<td><button data-btn-type="delete" data-item-id="_item_product_id_">Удалить</button></td>'+
+						'</tr>';
+			
+			// наполним темплейт
+			
+			// сформируем html представление опций товара если они у него есть
+			optionsHtml = '';
+			if(cartItem.options.length > 0){
+				
+				_.each(cartItem.options, function(optObj){
+					
+					if(optObj.optionValue === 'null') return;
+					
+					optionsHtml += optObj.optionName + ': ' + optObj.optionValue + '<br />';
+				});
+			}
+			
+			// сделаем наполнение						
+			template = template.replace(/_item_photo_/, product.smallThumbnailUrl)
+							   .replace(/_item_product_id_/g, product.id)
+							   .replace(/_item_name_/, product.name)
+							   .replace(/_item_price_/, product.price)
+							   .replace(/_item_quantity_/, cartItem.quantity)
+							   .replace(/_item_total_price_/, product.price * cartItem.quantity)
+							   .replace(/_item_options_/, optionsHtml);
+			
+			mainTable.innerHTML += template;		
+		}
+		
+		// вставим полученную таблицу в окно корзины
+		this.cartWindow.appendChild(mainTable);
+		this.contentContainer.appendChild(this.cartWindow);
+		
+		// повесим события на кнопки "Удалить товар из корзины"
+		deleteButtons = document.querySelectorAll('[data-btn-type="delete"]');
+		
+		for(key=0, n = deleteButtons.length; key < n; key++ ){
+			
+			deleteButtons[key].addEventListener('click', deleteProdItem(deleteButtons[key]), false);
+		}
+		
+		function deleteProdItem(button){
+			
+			return function(){
+				
+				// удаляем из коризны
+				EcWid.deleteFromCart( button.getAttribute('data-item-id') );
+				
+				// удаляем из dom
+				el = document.getElementById(button.getAttribute('data-item-id'));
+				el.parentNode.removeChild(el);				
+			};
+		}
+	
+	};
+	
+	
+	EcWid.deleteFromCart = function(prodId){
+	
+	
+		/* 
+			удаление товара из корзины 
+			prodId - id товара который удаляется
+		*/	
+		
+		prodId = parseInt(prodId); 	// изначально prodId имеет строковой тип, т.к значение берется 
+									// из аттрибутов dom элемента
+		
+		var key;
+		
+		for(key in this.cart){
+
+			if(this.cart[key].id === prodId){
+
+				this.cart.splice(key,1);
+			}
+		}
+	};
+	
 	EcWid.addToCart = function(){
 	
 		
@@ -342,6 +484,7 @@ var EcWid = {
 		
 		// запишем базовую информацию о товаре
 		product.id = this.product.id;
+		product.baseProduct = this.product;
 		product.options = [];	
 		
 		// узнаем какие опции были выбраны
@@ -512,7 +655,7 @@ var EcWid = {
 				this.goodsWindow.className = 'goods floatfix';	
 						
 			}else{
-				console.log('clean');
+				
 				this.goodsWindow.innerHTML = '';
 			}
 			
