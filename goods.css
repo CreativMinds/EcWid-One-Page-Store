@@ -5,6 +5,10 @@ ul.goods{
 	padding:0;
 	clear: both;
 	padding-top:20px;
+
+	background: #fff;
+	margin-top: 10px;
+	border-radius: 5px;
 }
 
 ul.goods li{
@@ -13,12 +17,14 @@ ul.goods li{
 	width:18%;
 	text-align: center;
 	margin:1%;
-	height:200px;
+	min-height:200px;
 }
 
 ul.goods li img{
 	max-width:90%;
 	margin-bottom:10px;
+	display: block;
+	margin:0 auto 10px;
 }
 ul.goods li img.noimage{
 	background:url('i/noimage.png');

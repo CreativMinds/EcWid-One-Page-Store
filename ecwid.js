@@ -322,7 +322,7 @@ var EcWid = {
 				// кнопки: "Положить в корзину", "Перейти в корзину"
  				el.innerHTML += '<div class="cart-btn">' +
 								'<button class="btn btn-default" id="put-in-cart-btn">В корзину</button>'+
-								'<a href="#!/~/cart/"><button class="btn btn-default" id="go-to-cart-btn">'+
+								'<a href="#!/~/cart/"><button class="btn btn-success" id="go-to-cart-btn">'+
 								'Перейти в Коризину</button></a>'+
 								'</div>';
 				
@@ -368,7 +368,7 @@ var EcWid = {
 		// создадим основную таблицу где будет отображаться список товаров
 		mainTable = document.createElement('table');
 		mainTable.className = 'table table-stripped cart';
-		mainTable.innerHTML = '<tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Итого</th><th></th></tr>';
+		mainTable.innerHTML = '<tr class="header"><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Итого</th><th></th></tr>';
 		
 		// внесем в таблицу записи о товарах
 		for(key in this.cart){
@@ -387,13 +387,14 @@ var EcWid = {
 			template += '<tr id="_item_product_id_">'+
 							'<td>'+
 								'<img src="_item_photo_" class="cartItemPhoto" />'+
-								'<b>_item_name_</b><br />'+
-								'_item_options_'+
+								'<b>_item_name_</b>'+
+								'<div class="item-options">_item_options_</div>'+
 							'</td>'+
 							'<td>_item_price_</td>'+
 							'<td>_item_quantity_</td>'+
 							'<td>_item_total_price_</td>'+
-							'<td><button data-btn-type="delete" data-item-id="_item_product_id_">Удалить</button></td>'+
+							'<td><button data-btn-type="delete" class="btn btn-default" '+
+							'data-item-id="_item_product_id_">Удалить</button></td>'+
 						'</tr>';
 			
 			// наполним темплейт

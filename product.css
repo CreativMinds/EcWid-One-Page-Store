@@ -1,5 +1,7 @@
 div.product-window{
 	width: 100%;
+	background:#fff;
+	margin-top:30px;
 }
 div.prod-image{
 	width:70%;
@@ -9,6 +11,7 @@ div.prod-image{
 
 div.prod-image img{
 	max-width:90%;
+	margin-top:5%;
 }
 
 div.prod-details{
@@ -36,6 +39,7 @@ div.prod-details .price{
 div.prod-description{
 	width:100%;
 	clear: both;
+	padding:20px;
 }
 
 div.prod-options{

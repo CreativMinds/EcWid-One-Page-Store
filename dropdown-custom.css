@@ -1,0 +1,29 @@
+ul.dropdown{
+	width:100%;
+	background:#fff;
+	padding: 10px;
+	border-radius: 5px;	
+}
+ul.dropdown li {
+	padding:5px;
+	background: #fff;
+}
+ul.dropdown a{
+	padding:10px;
+	display: block;
+	border-radius:3px;
+}
+ul.dropdown a:hover{
+	background:#607d91;
+	color:#fff;
+	text-decoration: none;
+}
+ul.dropdown ul{
+	width:150px;
+	padding-top:10px;
+#	border:1px solid #eee;
+}
+
+ul.dropdown ul *.dir{
+	border-bottom:1px dashed #222;
+}
