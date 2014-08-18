@@ -105,7 +105,7 @@ var EcWid = {
 		body.appendChild(script);
 	};	
 	
-	EcWid.showGoodsTemplateEdition = function(paramsObj){
+	EcWid.showGoods = function(paramsObj){
 	
 	
 		/* Отображение списка товаров */
@@ -171,7 +171,7 @@ var EcWid = {
 		this.loadData('categories','EcWid.getCategories',this.gerenateMainMenu);
 		
 		// отобразим список товаров
-		this.showGoodsTemplateEdition();
+		this.showGoods();
 		
 		// добавим слежение за кликами по ссылкам
 		this.eventListenersOn();
@@ -257,7 +257,7 @@ var EcWid = {
 		// пользователь запросил категорию
 		if(controller === 'category'){
 			
-			this.showGoodsTemplateEdition(params);
+			this.showGoods(params);
 		}
 		
 		// пользователь запросил товар
@@ -656,79 +656,6 @@ var EcWid = {
 
 			return template;
 		}
-	};
-	
-	EcWid.showGoods = function(paramsObj){
-	
-	
-		/* Отображение списка товаров 
-			
-			Сгенерируем блок с товарами (UL), после чего сгеренируем каждый товар (LI), добавим товары в блок
-			и затем вставим его в главное окно нашего магазина EcWid.window
-			
-			paramsObj - обьект с настройками, если не переданы, то будут использоваться по умолчанию
-		*/
-		
-		var	params = {			// настройки по умолчанию
-				limit: null,				// число результатов в выдаче, null - нет ограничения
-				category: null				// id категории, null - все товары
-			},
-			key;
-		
-		// перезапишем настройки если они были переданы
-		if(paramsObj){
-			for(key in paramsObj){
-				params[key] = paramsObj[key];
-			}
-		}
-
-		// очистим основное окно от содержимого
-		this.contentContainer.innerHTML = '';
-				
-		// получим товары и отобразим их
-		this.loadData('products','EcWid.getProducts',function(){
-			
-			var li, a, img,
-				key;
-			
-			// создадим контейнер для товаров (UL), если он не создан ранее			
-			if(this.goodsWindow === null){
-				
-				this.goodsWindow = document.createElement('ul');
-				this.goodsWindow.className = 'goods floatfix';	
-						
-			}else{
-				
-				this.goodsWindow.innerHTML = '';
-			}
-			
-			// создадим товары
-				for(key in this.products){
-					
-					li = document.createElement('li');
-					a = document.createElement('a');
-					img = document.createElement('img');
-					
-					if(this.products[key].thumbnailUrl){
-						img.src = this.products[key].thumbnailUrl;
-					}else{
-						img.className = 'noimage';
-					}
-					
-					a.href = '#!/~/product/id=' + this.products[key].id;
-					
-					a.appendChild(img);
-					
-					a.innerHTML += this.products[key].name;
-					
-					li.appendChild(a);									
-					this.goodsWindow.appendChild(li);	
-				}
-				
-			// поместим в документ
-				this.contentContainer.appendChild(this.goodsWindow);			
-		},params);
-		
 	};
 	
 	EcWid.gerenateMainMenu = function(){
