@@ -21,7 +21,9 @@ var EcWid = {
 	"cartWindow": null,							// по аналогии с productWindow
 	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
 	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
-	"cart": []									// корзина, хранит обекты с описанием товаров
+	"cart": [],									// корзина, хранит обекты с описанием товаров
+	"template": null,
+	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache'
 };
 
 	EcWid.loadData = function(controller, jpCallback, callback, params){
@@ -75,7 +77,68 @@ var EcWid = {
 		
 		body.appendChild(script);
 	};
+
+	EcWid.loadTemplate = function(templateName, callback){
 	
+		/* 
+			загрузка темплейта методом jsonp в EcWid.template
+		*/
+		
+		var script,
+			body = document.getElementsByTagName('body')[0];
+		
+		// сгенерируем script тег и вставим его в документ, после чего сделаем так, чтобы он 
+		// удалил себя, когда завершится загрузка данных	
+		script = document.createElement('script');
+			
+		script.src = this.templateUrl + 
+						'/' + templateName + '.mst';
+						
+		script.type = 'text/javascript';				
+		
+		script.onload = function(){
+			
+				callback();
+				this.parentElement.removeChild(this);
+			};			
+		
+		body.appendChild(script);
+	};	
+	
+	EcWid.showGoodsTemplateEdition = function(paramsObj){
+	
+	
+		/* Отображение списка товаров */
+		
+		var	params = {			// настройки по умолчанию
+				limit: null,				// число результатов в выдаче, null - нет ограничения
+				category: null				// id категории, null - все товары
+			},
+			key;
+		
+		// перезапишем настройки если они были переданы
+		if(paramsObj){
+			for(key in paramsObj){
+				params[key] = paramsObj[key];
+			}
+		}
+
+		// очистим основное окно от содержимого
+		this.contentContainer.innerHTML = '';
+				
+		// получим товары и отобразим их
+		this.loadData('products','EcWid.getProducts',function(){
+			
+			this.loadTemplate('goods', function(){
+		
+				var rendered = Mustache.render(EcWid.template, {products: EcWid.products});
+				EcWid.contentContainer.innerHTML = rendered;
+				
+			});
+						
+		},params);
+		
+	};	
 	
 	EcWid.getCategories = function(categories){
 		// jsonp функция,получение всего списка категорий
@@ -108,7 +171,7 @@ var EcWid = {
 		this.loadData('categories','EcWid.getCategories',this.gerenateMainMenu);
 		
 		// отобразим список товаров
-		this.showGoods();
+		this.showGoodsTemplateEdition();
 		
 		// добавим слежение за кликами по ссылкам
 		this.eventListenersOn();
@@ -194,7 +257,7 @@ var EcWid = {
 		// пользователь запросил категорию
 		if(controller === 'category'){
 			
-			this.showGoods(params);
+			this.showGoodsTemplateEdition(params);
 		}
 		
 		// пользователь запросил товар

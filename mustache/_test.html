@@ -9,43 +9,25 @@
 <body>
 
 <div id="target">123</div>
+
+<div id=template style="display:none;">
+
+	{{#stooges}}
+		<b>{{name}}</b>
+	{{/stooges}}
+
+</div>
   
   <script>
- 
- var template;
- 
- function loadTemplate(){
- 	
-	var script,
-		body = document.getElementsByTagName('body')[0],
-		url = 'http://ftpbuzz.ru/ecwid/mustache',
-		name = 'template';
 
- 	script = document.createElement('script');
-			
-	script.src = url + '/' + name + '.mst';				
-		
-	script.onload = function(){
-	   
-	   	 	var rendered = Mustache.render(template, {name: "Luke"});
-	   	 	$('#target').html(rendered);				
-			
-		};			
-		
-	body.appendChild(script);
- 
- };
-  
-  function loadUser() {
-	  $.get('template.mst', function(template) {
-	    var rendered = Mustache.render(template, {name: "Luke"});
-	    $('#target').html(rendered);
-	  });
-	}
+	var template = $('#template').text();
+	
+	var rendered = Mustache.render(template, {stooges: [{name: "Larry"},{name: "Bob"}]});
+	$('#target').html(rendered);
 
-	loadTemplate();
+
   
   </script>
-  
+
 </body>
 </html>

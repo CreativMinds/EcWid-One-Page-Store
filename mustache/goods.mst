@@ -1,0 +1,7 @@
+EcWid.template = '<ul class="goods floatfix"> '+
+	'{{#products}} '+
+		'<li> '+
+			'<a href="#!/~/product/id={{id}}"><img src="{{imageUrl}}">{{name}}</a> '+
+		'</li> '+
+	'{{/products}} '+
+'</ul>';
