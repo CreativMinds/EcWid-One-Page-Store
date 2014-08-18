@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="mustache.js"></script>
+  <meta charset="utf-8">
+  <title>Templating</title>
+</head>
+<body>
+
+<div id="target">123</div>
+  
+  <script>
+ 
+ var template;
+ 
+ function loadTemplate(){
+ 	
+	var script,
+		body = document.getElementsByTagName('body')[0],
+		url = 'http://ftpbuzz.ru/ecwid/mustache',
+		name = 'template';
+
+ 	script = document.createElement('script');
+			
+	script.src = url + '/' + name + '.mst';				
+		
+	script.onload = function(){
+	   
+	   	 	var rendered = Mustache.render(template, {name: "Luke"});
+	   	 	$('#target').html(rendered);				
+			
+		};			
+		
+	body.appendChild(script);
+ 
+ };
+  
+  function loadUser() {
+	  $.get('template.mst', function(template) {
+	    var rendered = Mustache.render(template, {name: "Luke"});
+	    $('#target').html(rendered);
+	  });
+	}
+
+	loadTemplate();
+  
+  </script>
+  
+</body>
+</html>

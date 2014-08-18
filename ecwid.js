@@ -21,30 +21,9 @@ var EcWid = {
 	"cartWindow": null,							// по аналогии с productWindow
 	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
 	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
-	"cart": [],									// корзина, хранит обекты с описанием товаров
-	"domUid": 1									// uid для генерации уникальных dom id 
+	"cart": []									// корзина, хранит обекты с описанием товаров
 };
 
-	EcWid.generateUniqId = function(){
-		
-		
-		/* генерация уникального id для html элементов */
-
-		this.domUid++;
-		return 'ecwid-uid-' + this.domUid;
-
-/*		сложный метод		
-	    var d = new Date().getTime();
-	    var uuid = 'ecwid-xxxx-xxxx-yxxx-xxxxx'.replace(/[xy]/g, function(c) {
-	        var r = (d + Math.random()*16)%16 | 0;
-	        d = Math.floor(d/16);
-	        return (c=='x' ? r : (r&0x7|0x8)).toString(16);
-	    });
-		
-	    return uuid;
-*/
-	};
-	
 	EcWid.loadData = function(controller, jpCallback, callback, params){
 	
 		/* 
@@ -643,7 +622,7 @@ var EcWid = {
 		// очистим основное окно от содержимого
 		this.contentContainer.innerHTML = '';
 				
-		// получим товары
+		// получим товары и отобразим их
 		this.loadData('products','EcWid.getProducts',function(){
 			
 			var li, a, img,
