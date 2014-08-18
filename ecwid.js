@@ -78,32 +78,38 @@ var EcWid = {
 		body.appendChild(script);
 	};
 
-	EcWid.loadTemplate = function(templateName, callback){
-	
-		/* 
-			загрузка темплейта методом jsonp в EcWid.template
-		*/
+
+	EcWid.loadTemplate = function(templateName, templateVar, callback){
 		
-		var script,
-			body = document.getElementsByTagName('body')[0];
 		
-		// сгенерируем script тег и вставим его в документ, после чего сделаем так, чтобы он 
-		// удалил себя, когда завершится загрузка данных	
-		script = document.createElement('script');
+	/* загрузим темплейт и поместим его в указанную переменную */
+		
+		return new Promise(function(resolve, reject){
 			
-		script.src = this.templateUrl + 
-						'/' + templateName + '.mst';
-						
-		script.type = 'text/javascript';				
-		
-		script.onload = function(){
+			var script,
+				body = document.getElementsByTagName('body')[0];
 			
-				callback();
-				this.parentElement.removeChild(this);
-			};			
+			// сгенерируем script тег и вставим его в документ, после чего сделаем так, чтобы он 
+			// удалил себя, когда завершится загрузка данных	
+			script = document.createElement('script');
+				
+			script.src = EcWid.templateUrl + 
+							'/' + templateName + '.mst' + '?var=' + templateVar;
+							
+			script.type = 'text/javascript';				
+			
+			script.onload = function(){
+				
+					resolve();
+					if(callback) callback();
+					this.parentElement.removeChild(this);
+				};			
+			
+			body.appendChild(script);		
+		});	
 		
-		body.appendChild(script);
-	};	
+	};
+
 	
 	EcWid.showGoods = function(paramsObj){
 	
@@ -129,12 +135,13 @@ var EcWid = {
 		// получим товары и отобразим их
 		this.loadData('products','EcWid.getProducts',function(){
 			
-			this.loadTemplate('goods', function(){
-		
-				var rendered = Mustache.render(EcWid.template, {products: EcWid.products});
-				EcWid.contentContainer.innerHTML = rendered;
+			var tplPromise = this.loadTemplate('goods','EcWid.template');
 				
-			});
+				tplPromise.then(function(){
+					var rendered = Mustache.render(EcWid.template, {products: EcWid.products});
+					EcWid.contentContainer.innerHTML = rendered;					
+				});
+
 						
 		},params);
 		
@@ -611,7 +618,7 @@ var EcWid = {
 				}
 				
 				// сгенерируем темплейт
-				uid = this.generateUniqId();
+				uid = _.uniqueId('radio_');
 				template += '<input type="radio" id="'+ uid +'" name="' + 
 								optionObj.name + '" value="' + 
 								choice.text + '" data-price-modifier-type="' + 

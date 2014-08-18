@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+
+  <meta charset="utf-8">
+  <title>Promises</title>
+</head>
+<body>
+
+<div id="target">123</div>
+
+
+  
+<script>
+
+	var EcWid = {
+	
+		template: null
+	
+	};
+	
+	EcWid.loadTemplate = function(templateName, callback){
+	
+		/* 
+			загрузка темплейта методом jsonp в EcWid.template
+		*/
+	
+		return new Promise(function(resolve, reject){
+
+		var script,
+			body = document.getElementsByTagName('body')[0];
+
+			script = document.createElement('script');
+				
+			script.src = 'http://ftpbuzz.ru/ecwid/mustache' + 
+							'/' + templateName + '.mst';
+							
+			script.type = 'text/javascript';				
+			
+			script.onload = function(){
+				
+					if(callback) callback();
+					EcWid.template = template;
+					this.parentElement.removeChild(this);
+					console.log('real finish uploading');
+					resolve();
+				};			
+			
+			body.appendChild(script);			
+			
+		});
+		
+	};		
+  
+  	
+	// sync code
+	console.log('start sync code');
+		
+	var p = EcWid.loadTemplate('template');
+	
+	p.then(function(){
+	
+		console.log('then: template uploaded: ' + EcWid.template);
+	});
+	
+	console.log('template uploaded: ' + EcWid.template);
+  
+</script>
+
+</body>
+</html>

@@ -12,17 +12,55 @@
 
 <div id=template style="display:none;">
 
-	{{#stooges}}
-		<b>{{name}}</b>
-	{{/stooges}}
+	{{#options}}
+	
+	<div>
+	
+		<b>{{type}}, {{{show}}}</b> <br />
+		
+		{{#choices}}
+			<b>{{name}}</b>
+		{{/choices}}
+	
+	</div>
+		
+	{{/options}}
 
 </div>
+
+<div id=selectTemplate style="display:none;">
+	<select>
+		{{#choices}}
+			<option>{{name}}</option>
+		{{/choices}}		
+	</select>
+</div>  
+  
   
   <script>
 
-	var template = $('#template').text();
+	var template = $('#template').html();
+	var selectTemplate = $('#selectTemplate').html();
 	
-	var rendered = Mustache.render(template, {stooges: [{name: "Larry"},{name: "Bob"}]});
+	var options = [{
+		type: "select",
+		choices: [{name: "softcover"},{name: "hardcover"}],
+		show: function(){
+			
+			return Mustache.render('{{>'+this.type+'}}', this, {select: selectTemplate});
+		}
+	},
+	{
+		type: "radio",
+		choices: [{name: "softcover"},{name: "hardcover"}],
+		show: function(){
+			return Mustache.render('{{'+this.type+'}}', this);
+		}		
+	}	
+	];
+	
+	
+	var rendered = Mustache.render(template, {options: options});
 	$('#target').html(rendered);
 
 

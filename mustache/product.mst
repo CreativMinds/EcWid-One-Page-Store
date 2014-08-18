@@ -1,0 +1,45 @@
+<div class="product-window floatfix">
+ 
+	<div class="prod-image">
+		<img src="{{imageUrl}}">
+	</div>		
+
+	<div class="prod-details">
+	<span class="title">Price:</span> <span class="price">${{price}}</span>
+
+	<ul class="prod-attributes">
+	
+	{{#attributes}}
+		<li>{{name}}: {{value}}</li>
+	{{/attributes}}
+	
+	</ul>
+
+
+	{{#options}}
+		<li>{{name}}: {{value}}</li>
+	{{/options}}
+	
+	<div class="prod-options" data-option-name="Papercover" data-option-type="SELECT" data-option-required="false">
+
+		<span class="title">Papercover</span> <br>
+		<select name="Papercover">
+			<option value="null">-----</option>
+			<option value="softcover" data-price-modifier-type="PERCENT" data-price-modifier="0"> softcover</option>
+			<option value="hardcover" data-price-modifier-type="PERCENT" data-price-modifier="5"> hardcover</option>
+		</select>
+	</div>
+
+	<div>
+		<span class="title">Quantity:</span>
+		<input class="quantity" type="number" name="quantity" value="1" min="1">
+	</div>
+	
+	<div class="cart-btn">
+		<button class="btn btn-default" id="put-in-cart-btn">В корзину</button>
+		<a href="#!/~/cart/"><button class="btn btn-success" id="go-to-cart-btn">Перейти в Коризину</button></a>
+	</div>
+	
+	</div>																																
+	<div class="prod-description">{{description}}</div>
+</div>

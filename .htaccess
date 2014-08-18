@@ -1,0 +1,9 @@
+AddDefaultCharset UTF-8
+RemoveHandler .html .htm .mst 
+AddType application/x-httpd-php .php .htm .html .phtml .mst
+php_value memory_limit 128M
+
+php_value display_errors 1
+
+php_flag display_errors On
+Options -Indexes
