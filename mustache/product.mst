@@ -1,3 +1,6 @@
+<?
+	header('Content-type: application/javascript');
+?>
 <? echo $_GET['var']; ?> = '<div class="product-window floatfix">   '+
  
 	'<div class="prod-image">   '+

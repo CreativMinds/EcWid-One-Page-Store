@@ -1,3 +1,6 @@
+<?
+	header('Content-type: application/javascript');
+?>
 <? echo $_GET['var']; ?> = '<ul class="goods floatfix"> '+
 	'{{#products}} '+
 		'<li> '+

@@ -1,3 +1,6 @@
+<?
+	header('Content-type: application/javascript');
+?>
 <? echo $_GET['var']; ?> = ''+
 
 '<div class="cart-window floatfix">	'+
@@ -16,7 +19,7 @@
 		'<tr id="{{id}}">	'+
 			'<td>	'+
 				'<img src="{{baseProduct.imageUrl}}" class="cartItemPhoto">	'+
-				'<b>{{baseProduct.name}}</b>	'+
+				'<a href="#!/~/product/id={{id}}"><b>{{baseProduct.name}}</b></a>	'+
 				'<div class="item-options">	'+
 				'{{#options}}	'+
 					'{{optionName}}: {{optionValue}} <br />		'+	

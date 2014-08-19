@@ -1,3 +1,6 @@
+<?
+	header('Content-type: application/javascript');
+?>
 <? echo $_GET['var']; ?> = ''+
 	
 '<div class="prod-options" data-option-name="{{name}}" data-option-type="{{type}}" data-option-required="false">   '+
