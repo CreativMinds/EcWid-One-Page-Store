@@ -272,7 +272,7 @@ var EcWid = {
 		if(controller === 'product'){
 			
 			//this.showProduct(params);
-			this.showProductWithTemplate(params);
+			this.showProduct(params);
 		}
 
 		// пользователь перешел в корзину
@@ -283,115 +283,6 @@ var EcWid = {
 	}
 	
 	EcWid.showProduct = function(paramsObj){
-	
-	
-		/* отображение информации по товару */
-		
-		var params = {id: null};
-
-		// перезапишем настройки если они были переданы
-		if(paramsObj){
-			for(key in paramsObj){
-				params[key] = paramsObj[key];
-			}
-		}		
-		
-		// очистим основное окно от содержимого
-		this.contentContainer.innerHTML = '';
-		
-		// создаем окно товара, если оно не создано
-		if(this.productWindow === null){
-			
-			this.productWindow = document.createElement('div');
-			this.productWindow.className = 'product-window floatfix';
-			
-		}else{
-			this.productWindow.innerHTML = '';
-		}
-		
-		// загрузим данные о товаре и сделаем вывод на страницу/окно товара
-		this.loadData('product','EcWid.getProduct',function(){
-			
-			
-			var template = '',		// базовый темплейт карточки товара
-				el, ul, li,			// dom контейнеры
-				key,				// просто индекс
-				addToCartbounded = this.addToCart.bind(this);	// привязанная функция для event listener 
-			
-			// создадим базовый шаблон и добавим его в документ
-			template += '<div class="prod-image"></div>';
-			template += '<div class="prod-details"></div>';
-			template += '<div class="prod-description"></div>'; 
-			
-			this.productWindow.innerHTML = template;
-			this.contentContainer.appendChild(this.productWindow);
-			
-			// наполним шаблон
-			
-			// добавим изображение
-			el = document.querySelector('#' + this.windowSelector + ' .prod-image');
-			el.innerHTML = '<img src=' + this.product.imageUrl + ' />';
-			
-			// добавим детали товара
-			el = document.querySelector('#' + this.windowSelector + ' .prod-details');
-				
-				// цена
-				el.innerHTML = '<span class="title">Price:</span> <span class="price">$' + 
-							this.product.price + '</span>';
-			
-				// аттрибуты
-				if(this.product.attributes.length > 0){
-
-					ul = document.createElement('ul');
-					ul.className = 'prod-attributes';
-
-					for(key in this.product.attributes){
-						
-						li = document.createElement('li');
-						
-						li.innerHTML = this.product.attributes[key].name + ': ' + this.product.attributes[key].value;
-						ul.appendChild(li);
-					}
-					
-					el.appendChild(ul);			
-				}
-				
-				// опции
-				if(this.product.options.length > 0){
-					
-					for(key in this.product.options){
-						 	
-						el.innerHTML += this.genOptionHtmlView(this.product.options[key]);
-					}
-				}
-				
-				// кол-во
-				el.innerHTML += '<div><span class="title">Quantity:</span>' +
-									'<input class="quantity" type="number" name="quantity" value="1" min="1">'+
-								'</div>';
-								
-				// кнопки: "Положить в корзину", "Перейти в корзину"
- 				el.innerHTML += '<div class="cart-btn">' +
-								'<button class="btn btn-default" id="put-in-cart-btn">В корзину</button>'+
-								'<a href="#!/~/cart/"><button class="btn btn-success" id="go-to-cart-btn">'+
-								'Перейти в Коризину</button></a>'+
-								'</div>';
-				
-								
-				// привяжем события напрямую на обьекты не создавая лишних переменных reference
-				// чтобы при удалении dom событие также было удалено
-				document.getElementById('put-in-cart-btn').addEventListener('click', addToCartbounded, false);
-			
-			// добавим полное описание
-			el = document.querySelector('#' + this.windowSelector + ' .prod-description');
-			el.innerHTML = this.product.description;
-				
-		},params);
-		
-	};
-	
-
-	EcWid.showProductWithTemplate = function(paramsObj){
 	
 	
 		/* отображение информации по товару */
