@@ -43,11 +43,11 @@
 	var selectTemplate = $('#selectTemplate').html();
 	
 	var options = [{
-		type: "select",
+		type: "SELECT",
 		choices: [{name: "softcover"},{name: "hardcover"}],
 		show: function(){
 			
-			return Mustache.render('{{>'+this.type+'}}', this, {select: selectTemplate});
+			return Mustache.render('{{>'+this.type+'}}', this, {SELECT: selectTemplate});
 		}
 	},
 	{

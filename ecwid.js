@@ -1,6 +1,6 @@
 /*
 
-	Страница корзины
+	Страница товара - темплейт
 
 */
 
@@ -23,7 +23,8 @@ var EcWid = {
 	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
 	"cart": [],									// корзина, хранит обекты с описанием товаров
 	"template": null,
-	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache'
+	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache',
+	"templates": {}								// обьект в который мы будем загружать темплейты
 };
 
 	EcWid.loadData = function(controller, jpCallback, callback, params){
@@ -82,7 +83,7 @@ var EcWid = {
 	EcWid.loadTemplate = function(templateName, templateVar, callback){
 		
 		
-	/* загрузим темплейт и поместим его в указанную переменную */
+	/* загрузим темплейт templateName и поместим его в указанную переменную templateVar */
 		
 		return new Promise(function(resolve, reject){
 			
@@ -120,7 +121,8 @@ var EcWid = {
 				limit: null,				// число результатов в выдаче, null - нет ограничения
 				category: null				// id категории, null - все товары
 			},
-			key;
+			key,
+			tplPromise;						// promise обьект для загрузки шаблона
 		
 		// перезапишем настройки если они были переданы
 		if(paramsObj){
@@ -135,13 +137,12 @@ var EcWid = {
 		// получим товары и отобразим их
 		this.loadData('products','EcWid.getProducts',function(){
 			
-			var tplPromise = this.loadTemplate('goods','EcWid.template');
+			tplPromise = this.loadTemplate('goods','EcWid.template');
 				
-				tplPromise.then(function(){
-					var rendered = Mustache.render(EcWid.template, {products: EcWid.products});
-					EcWid.contentContainer.innerHTML = rendered;					
-				});
-
+			tplPromise.then(function(){
+				var rendered = Mustache.render(EcWid.template, {products: EcWid.products});
+				EcWid.contentContainer.innerHTML = rendered;					
+			});
 						
 		},params);
 		
@@ -270,7 +271,8 @@ var EcWid = {
 		// пользователь запросил товар
 		if(controller === 'product'){
 			
-			this.showProduct(params);
+			//this.showProduct(params);
+			this.showProductWithTemplate(params);
 		}
 
 		// пользователь перешел в корзину
@@ -388,6 +390,63 @@ var EcWid = {
 		
 	};
 	
+
+	EcWid.showProductWithTemplate = function(paramsObj){
+	
+	
+		/* отображение информации по товару */
+		
+		var params = {id: null};
+
+		// перезапишем настройки если они были переданы
+		if(paramsObj){
+			for(key in paramsObj){
+				params[key] = paramsObj[key];
+			}
+		}		
+		
+		// очистим основное окно от содержимого
+		this.contentContainer.innerHTML = '';
+			
+		// загрузим данные о товаре и сделаем вывод на страницу/окно товара
+		this.loadData('product','EcWid.getProduct',function(){
+			
+			
+			var template = '',		// базовый темплейт карточки товара
+				el, ul, li,			// dom контейнеры
+				key,				// просто индекс
+				addToCartbounded = this.addToCart.bind(this),	// привязанная функция для event listener 
+				Templates = [];
+			
+			// загрузим темплейты
+			Templates.push( this.loadTemplate('product','EcWid.templates.product') );
+			Templates.push( this.loadTemplate('product-select','EcWid.templates.productSelect') );
+			
+			// отобразим темплейты
+			Promise.all(Templates).then(function(){
+				
+				// добавим в обьекты опций функцию которая будет отвечать за их рендеринг
+				EcWid.product.options.forEach(function(element, index){
+					
+					EcWid.product.options[index].render = function(){
+					
+						return Mustache.render('{{>'+this.type+'}}', this, {SELECT: EcWid.templates.productSelect});
+					}
+				});
+				
+				// отобразим темплейт
+				var rendered = Mustache.render(EcWid.templates.product, {product: EcWid.product});
+				EcWid.contentContainer.innerHTML = rendered;					
+
+				// привяжем события
+				// на кнопку Положить в корзину
+				document.getElementById('put-in-cart-btn').addEventListener('click', addToCartbounded, false);
+						
+			});
+				
+		},params);
+		
+	};
 	
 	
 	EcWid.showCart = function(){
