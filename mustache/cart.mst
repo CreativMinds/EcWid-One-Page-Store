@@ -1,0 +1,34 @@
+<? echo $_GET['var']; ?> = ''+
+
+'<div class="cart-window floatfix">	'+
+	'<table class="table table-stripped cart">	'+
+		'<tbody>	'+
+		'<tr class="header">	'+
+			'<th>Товар</th>	'+
+			'<th>Цена</th>	'+
+			'<th>Кол-во</th>	'+
+			'<th>Итого</th>	'+
+			'<th></th>	'+
+		'</tr>	'+
+		'</tbody>	'+
+		'<tbody>	'+
+		'{{#cart}}	'+
+		'<tr id="{{id}}">	'+
+			'<td>	'+
+				'<img src="{{baseProduct.imageUrl}}" class="cartItemPhoto">	'+
+				'<b>{{baseProduct.name}}</b>	'+
+				'<div class="item-options">	'+
+				'{{#options}}	'+
+					'{{optionName}}: {{optionValue}} <br />		'+	
+				'{{/options}}	'+
+				'</div>	'+
+			'</td>	'+
+			'<td>{{baseProduct.price}}</td>	'+
+			'<td>{{quantity}}</td>	'+
+			'<td>{{totalPrice}}</td>	'+
+			'<td><button data-btn-type="delete" class="btn btn-default" data-item-id="{{id}}">Удалить</button></td>	'+
+		'</tr>	'+
+		'{{/cart}}	'+
+		'</tbody>	'+
+	'</table>	'+
+'</div>	';

@@ -3,10 +3,15 @@
 '<div class="prod-options" data-option-name="{{name}}" data-option-type="{{type}}" data-option-required="false">   '+
 
 	'<span class="title">{{name}}</span> <br>   '+
+	
 	'<select name="{{name}}">   '+
+	
 	'{{#choices}}    '+
+	
 		'<option value="{{text}}" data-price-modifier-type="{{priceModifierType}}"   '+ 
 		'data-price-modifier="{{priceModifier}}">{{text}}</option>   '+
+	
 	'{{/choices}}    '+
+	
 	'</select>   '+
 '</div>';

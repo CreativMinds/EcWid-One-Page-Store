@@ -278,6 +278,7 @@ var EcWid = {
 		// пользователь перешел в корзину
 		if(controller === 'cart'){
 			
+			//this.showCart();
 			this.showCart();
 		}
 	}
@@ -338,101 +339,51 @@ var EcWid = {
 		},params);
 		
 	};
-	
-	
+
+
 	EcWid.showCart = function(){
 	
 	
 		/* отображение корзины с товарами */	
 		
-		var mainTable,						// таблица с содержимым корзины
-			cartItem,						// обьект в корзине с описанием продукта (id продукта, заказанное кол-во)
-											// опции продукта
-			product,						// продукт взятый из this.products, содержит все данные о товаре
-			template,						// шаблон таблицы mainTable
-			key, n,
-			optionsHtml,
+		var key, n,
 			deleteButtons,
-			cartItemDomId,
-			el;
+			el,
+			Templates = [];
 			
 		
 		// очистим основное окно от содержимого
 		this.contentContainer.innerHTML = '';
-		
-		// создаем окно корзины, если оно не создано
-		this.cartWindow = document.createElement('div');
-		this.cartWindow.className = 'cart-window floatfix';
-			
-		// создадим основную таблицу где будет отображаться список товаров
-		mainTable = document.createElement('table');
-		mainTable.className = 'table table-stripped cart';
-		mainTable.innerHTML = '<tr class="header"><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Итого</th><th></th></tr>';
-		
-		// внесем в таблицу записи о товарах
-		for(key in this.cart){
-			
-			// какой товар добавлен в корзину?
-			cartItem = this.cart[key];
-			
-			// получим подробные данные о товаре
-			//product = _.findWhere(EcWid.allProducts, {id: cartItem.id});
-			product = cartItem.baseProduct;
-			
-			// добавим запись в таблицу
-			
-			// опишем темплейт
-			template = '';			
-			template += '<tr id="_item_product_id_">'+
-							'<td>'+
-								'<img src="_item_photo_" class="cartItemPhoto" />'+
-								'<b>_item_name_</b>'+
-								'<div class="item-options">_item_options_</div>'+
-							'</td>'+
-							'<td>_item_price_</td>'+
-							'<td>_item_quantity_</td>'+
-							'<td>_item_total_price_</td>'+
-							'<td><button data-btn-type="delete" class="btn btn-default" '+
-							'data-item-id="_item_product_id_">Удалить</button></td>'+
-						'</tr>';
-			
-			// наполним темплейт
-			
-			// сформируем html представление опций товара если они у него есть
-			optionsHtml = '';
-			if(cartItem.options.length > 0){
+
+		// отобразим темплейт
+		Templates.push( this.loadTemplate('cart','EcWid.templates.cart') );		
+
+		Promise.all(Templates).then(function(){
+
+			// добавим в обьекты товаров лежащих в корзине функцию, которая будет отвечать за 
+			//отображение конечной стоимости товара
+			// формула: кол-во * стоимость
+			EcWid.cart.forEach(function(element, index){
 				
-				_.each(cartItem.options, function(optObj){
-					
-					if(optObj.optionValue === 'null') return;
-					
-					optionsHtml += optObj.optionName + ': ' + optObj.optionValue + '<br />';
-				});
+				EcWid.cart[index].totalPrice = function(){
+				
+					return this.quantity * this.baseProduct.price;
+				}
+			});
+							
+			// отобразим темплейт
+			var rendered = Mustache.render(EcWid.templates.cart, {cart: EcWid.cart});
+			EcWid.contentContainer.innerHTML = rendered;					
+
+			// повесим события на кнопки "Удалить товар из корзины"
+			deleteButtons = document.querySelectorAll('[data-btn-type="delete"]');
+			
+			for(key=0, n = deleteButtons.length; key < n; key++ ){
+				
+				deleteButtons[key].addEventListener('click', deleteProdItem(deleteButtons[key]), false);
 			}
-			
-			// сделаем наполнение						
-			template = template.replace(/_item_photo_/, product.smallThumbnailUrl)
-							   .replace(/_item_product_id_/g, product.id)
-							   .replace(/_item_name_/, product.name)
-							   .replace(/_item_price_/, product.price)
-							   .replace(/_item_quantity_/, cartItem.quantity)
-							   .replace(/_item_total_price_/, product.price * cartItem.quantity)
-							   .replace(/_item_options_/, optionsHtml);
-			
-			mainTable.innerHTML += template;		
-		}
-		
-		// вставим полученную таблицу в окно корзины
-		this.cartWindow.appendChild(mainTable);
-		this.contentContainer.appendChild(this.cartWindow);
-		
-		// повесим события на кнопки "Удалить товар из корзины"
-		deleteButtons = document.querySelectorAll('[data-btn-type="delete"]');
-		
-		for(key=0, n = deleteButtons.length; key < n; key++ ){
-			
-			deleteButtons[key].addEventListener('click', deleteProdItem(deleteButtons[key]), false);
-		}
+								
+		});
 		
 		function deleteProdItem(button){
 			
@@ -536,82 +487,6 @@ var EcWid = {
 			try{
 				return container.querySelector('[name="'+optionName+'"]').value;
 			}catch(e){}	
-		}
-	};
-	
-	EcWid.genOptionHtmlView = function(optionObj){
-	
-		
-		// генерация html view блоков с опциями товара для вставки в карточку товара	
-		var template,
-			key, 
-			uid,
-			checked = '',		// является ли элемент выбранным по умолчанию, только для radio и selected
-			choice;				// текущий обьект из массива optionObj.choices
-			
-		template = '<div class="prod-options" data-option-name="' + optionObj.name + 
-											'" data-option-type="' + optionObj.type + 
-											'" data-option-required="'+ optionObj.required +'">';
-											
-		template += '<span class=title>' + optionObj.name + '</span> <br />';
-		
-		if(optionObj.type === 'RADIO'){
-			
-			for(key in optionObj.choices){
-				
-				choice = optionObj.choices[key];
-				
-				// установим дефолтное значение только если опция обязательна
-				if(optionObj.required){
-				
-					if(optionObj.defaultChoice === key) checked = 'checked'; else checked = '';
-				}
-				
-				// сгенерируем темплейт
-				uid = _.uniqueId('radio_');
-				template += '<input type="radio" id="'+ uid +'" name="' + 
-								optionObj.name + '" value="' + 
-								choice.text + '" data-price-modifier-type="' + 
-								choice.priceModifierType + '" data-price-modifier="' + 
-								choice.priceModifier + '" ' + checked + ' />'+
-								' <label for="'+ uid +'">' + choice.text + '</label><br />';
-			}
-		
-			template += '</div>';
-
-			return template;
-		}
-
-		if(optionObj.type === 'SELECT'){
-			
-			template += '<select name="'+ optionObj.name +'">';
-			
-			if(!optionObj.required){
-				
-				template += '<option value=null>-----</option>';
-			}
-			
-			for(key in optionObj.choices){
-				
-				choice = optionObj.choices[key];
-				
-				// установим дефолтное значение только если опция обязательна
-				if(optionObj.required){
-				
-					if(optionObj.defaultChoice === key) checked = 'selected'; else checked = '';
-				}
-				
-				// сгенерируем темплейт
-				template += '<option value="' + choice.text + '" data-price-modifier-type="' + 
-								choice.priceModifierType + '" data-price-modifier="' + 
-								choice.priceModifier + '" ' + checked + ' > ' + choice.text + '</option>';
-			}
-			
-			template += '</select>';
-		
-			template += '</div>';
-
-			return template;
 		}
 	};
 	
