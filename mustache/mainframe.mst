@@ -2,10 +2,11 @@
 	header('Content-type: application/javascript');
 ?>
 <? echo $_GET['var']; ?> = '<table class="ecwidMainTable">'+
-									'<tr>'+
+									'<tr class="firstLine">'+
 										'<td id="mainMenu"></td>'+
+										'<td id="cart"></td>'+
 									'</tr>'+
 									'<tr>'+
-										'<td id="mainContent"></td>'+
+										'<td id="mainContent" colspan="2"></td>'+
 									'</tr>'+
 								'</table>';

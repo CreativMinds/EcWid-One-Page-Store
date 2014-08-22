@@ -20,3 +20,33 @@ table.ecwidMainTable tr td{
 	padding:0px;
 	margin:0px;
 }
+
+table.ecwidMainTable tr.firstLine td{
+	border-radius:4px;
+	background:#fff;
+}
+
+table.ecwidMainTable #cart img{
+	max-width:32px;
+	float: left;
+}
+table.ecwidMainTable #cart a.cart-holder{
+	background:#eee;
+	padding:10px;
+	font-weight: bold;
+	display: inline-block;
+	border-radius:4px;
+	float: right;
+	position: relative;
+	right:10px;
+	cursor: pointer;
+	text-decoration: none;
+	color:#222;
+}
+table.ecwidMainTable #cart div.cart-every-page{
+	display: inline-block;
+	padding:0;
+	padding-left: 10px;
+	box-sizing: border-box;
+	line-height: 32px;	
+}

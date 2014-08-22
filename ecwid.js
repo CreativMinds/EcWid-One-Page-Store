@@ -21,6 +21,7 @@ var EcWid = {
 	"cartWindow": null,							// по аналогии с productWindow
 	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
 	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
+	"cartContainer": null,						// хранит dom обекта коризны на каждой странице 
 	"cart": [],									// корзина, хранит обекты с описанием товаров
 	"template": null,
 	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache',
@@ -179,6 +180,9 @@ var EcWid = {
 			// загрузим категории и создадим на их основе главное меню
 			EcWid.loadData('categories','EcWid.getCategories',EcWid.gerenateMainMenu);
 			
+			// отобразим блок корзины 
+			EcWid.showCartLabel();
+			
 			// проверим на какую страницу магазина нужно перейти при его инициации
 			// в норме, это главная страница, но возможно человек делает свой первый вход сразу на страницу товара?
 			// для этого отслеживаем наличие хэша магазина в url ("#!/~/some-page")
@@ -194,6 +198,33 @@ var EcWid = {
 		
 		// добавим слежение за кликами по ссылкам которые относятся к страницам магазина
 		this.eventListenersOn();
+	};
+	
+	EcWid.showCartLabel = function(){
+	
+		
+		/* отображение блока корзины на каждой странице */
+		
+		var Templates = [];
+		
+		// загрузим и отобразим темплейт
+		Templates.push( this.loadTemplate('cart-every-page','EcWid.templates.cartLabel') );		
+		
+		Promise.all(Templates).then(function(){
+			
+			EcWid.cartContainer.innerHTML = EcWid.templates.cartLabel;
+			EcWid.cartRecounter();
+		});
+	};
+	
+	EcWid.cartRecounter = function(){
+	
+		
+		/* обновление информации в лейбле корзины о кол-ве товаров в ней */
+		
+		this.cart = JSON.parse(localStorage.getItem('cart'));	
+		
+		document.getElementById('cart-goods-counter').innerHTML = this.cart.length;
 	};
 	
 	EcWid.createMainFrame = function(callback){
@@ -217,6 +248,7 @@ var EcWid = {
 			// закешируем вышесозданные элементы меню и окно контента	
 			EcWid.menuContainer = mainHolder.querySelector('#mainMenu');					
 			EcWid.contentContainer = mainHolder.querySelector('#mainContent');
+			EcWid.cartContainer = mainHolder.querySelector('#cart');
 			
 			if(callback) callback();
 				
@@ -497,6 +529,8 @@ var EcWid = {
 		document.getElementById('go-to-cart-btn').innerHTML = 'Товар добавлен<br><b>Перейти в Корзину</b>';
 		document.getElementById('go-to-cart-btn').style.display = 'block';
 		document.getElementById('put-in-cart-btn').style.display = 'none';
+		
+		this.cartRecounter();
 	};
 	
 	EcWid.parseOptionValue = function(container, optionType, optionName){
