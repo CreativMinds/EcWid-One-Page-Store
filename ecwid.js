@@ -84,27 +84,35 @@ var EcWid = {
 	EcWid.loadTemplate = function(templateName, templateVar, callback){
 		
 		
-	/* загрузим темплейт templateName и поместим его в указанную переменную templateVar */
+	/* загрузим темплейт templateName и поместим его в указанную переменную templateVar в обьект EcWid.templates */
 		
 		return new Promise(function(resolve, reject){
 			
 			var script,
 				body = document.getElementsByTagName('body')[0];
 			
+			// не будем загружать темплейт, если он был загружен ранее
+			if(EcWid.templates[templateVar]){
+				
+				if(callback) callback();
+				resolve();	
+				return;			
+			}
+			
 			// сгенерируем script тег и вставим его в документ, после чего сделаем так, чтобы он 
 			// удалил себя, когда завершится загрузка данных	
 			script = document.createElement('script');
 				
 			script.src = EcWid.templateUrl + 
-							'/' + templateName + '.mst' + '?var=' + templateVar;
+							'/' + templateName + '.mst' + '?var=EcWid.templates.' + templateVar;
 							
 			script.type = 'text/javascript';				
 			
 			script.onload = function(){
-				
-					resolve();
+					
 					if(callback) callback();
 					this.parentElement.removeChild(this);
+					resolve();
 				};			
 			
 			body.appendChild(script);		
@@ -138,10 +146,10 @@ var EcWid = {
 		// получим товары и отобразим их
 		this.loadData('products','EcWid.getProducts',function(){
 			
-			tplPromise = this.loadTemplate('goods','EcWid.template');
+			tplPromise = this.loadTemplate('goods','goods');
 				
 			tplPromise.then(function(){
-				var rendered = Mustache.render(EcWid.template, {products: EcWid.products});
+				var rendered = Mustache.render(EcWid.templates.goods, {products: EcWid.products});
 				EcWid.contentContainer.innerHTML = rendered;					
 			});
 						
@@ -208,7 +216,7 @@ var EcWid = {
 		var Templates = [];
 		
 		// загрузим и отобразим темплейт
-		Templates.push( this.loadTemplate('cart-every-page','EcWid.templates.cartLabel') );		
+		Templates.push( this.loadTemplate('cart-every-page','cartLabel') );		
 		
 		Promise.all(Templates).then(function(){
 			
@@ -238,7 +246,7 @@ var EcWid = {
 		mainHolder.className = 'centered floatfix',
 
 		// загрузим темплейт
-		Templates.push( this.loadTemplate('mainframe','EcWid.templates.mainFrame') );
+		Templates.push( this.loadTemplate('mainframe','mainFrame') );
 			
 		// отобразим темплейт
 		Promise.all(Templates).then(function(){
@@ -360,8 +368,8 @@ var EcWid = {
 				Templates = [];
 			
 			// загрузим темплейты
-			Templates.push( this.loadTemplate('product','EcWid.templates.product') );
-			Templates.push( this.loadTemplate('product-select','EcWid.templates.productSelect') );
+			Templates.push( this.loadTemplate('product','product') );
+			Templates.push( this.loadTemplate('product-select','productSelect') );
 			
 			// отобразим темплейты
 			Promise.all(Templates).then(function(){
@@ -407,7 +415,7 @@ var EcWid = {
 		this.contentContainer.innerHTML = '';
 
 		// отобразим темплейт
-		Templates.push( this.loadTemplate('cart','EcWid.templates.cart') );		
+		Templates.push( this.loadTemplate('cart','cart') );		
 
 		Promise.all(Templates).then(function(){
 
