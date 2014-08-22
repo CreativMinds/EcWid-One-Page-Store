@@ -12,19 +12,7 @@
 
 <div id=template style="display:none;">
 
-	{{#options}}
-	
-	<div>
-	
-		<b>{{type}}, {{{show}}}</b> <br />
-		
-		{{#choices}}
-			<b>{{name}}</b>
-		{{/choices}}
-	
-	</div>
-		
-	{{/options}}
+	<div><b>hello this is div</b></div>
 
 </div>
 
@@ -44,23 +32,16 @@
 	
 	var options = [{
 		type: "SELECT",
-		choices: [{name: "softcover"},{name: "hardcover"}],
-		show: function(){
-			
-			return Mustache.render('{{>'+this.type+'}}', this, {SELECT: selectTemplate});
-		}
+		choices: [{name: "softcover"},{name: "hardcover"}]
 	},
 	{
 		type: "radio",
-		choices: [{name: "softcover"},{name: "hardcover"}],
-		show: function(){
-			return Mustache.render('{{'+this.type+'}}', this);
-		}		
+		choices: [{name: "softcover"},{name: "hardcover"}]
 	}	
 	];
 	
 	
-	var rendered = Mustache.render(template, {options: options});
+	var rendered = Mustache.render(template);
 	$('#target').html(rendered);
 
 

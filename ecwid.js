@@ -169,52 +169,59 @@ var EcWid = {
 	EcWid.init = function(){
 	
 		
-		// создадим основной фрейм окна, где все будет размещаться
-		this.createMainFrame();
+		// создадим основной фрейм окна, где все будет размещаться, а когда оно будет создано запустим 
+		// коллбэк который продолжит с ним работу 
+		this.createMainFrame(function(){
 		
-		// инициируем главное окно магазина, там где будет размещаться весь интерфейс
-		this.window = document.getElementById( this.windowSelector );
-		
-		// загрузим категории и создадим на их основе главное меню
-		this.loadData('categories','EcWid.getCategories',this.gerenateMainMenu);
-		
-		// проверим на какую страницу магазина нужно перейти при его инициации
-		// в норме, это главная страница, но возможно человек делает свой первый вход сразу на страницу товара?
-		// для этого отслеживаем наличие хэша магазина в url ("#!/~/some-page")
-		if( /^(#!\/~\/)/.test(location.hash)){
-		
-			this.traversing();
-		
-		}else{
-		
-			this.showGoods();
-		}
-		
+			// инициируем главное окно магазина, там где будет размещаться весь интерфейс
+			EcWid.window = document.getElementById( EcWid.windowSelector );
+			
+			// загрузим категории и создадим на их основе главное меню
+			EcWid.loadData('categories','EcWid.getCategories',EcWid.gerenateMainMenu);
+			
+			// проверим на какую страницу магазина нужно перейти при его инициации
+			// в норме, это главная страница, но возможно человек делает свой первый вход сразу на страницу товара?
+			// для этого отслеживаем наличие хэша магазина в url ("#!/~/some-page")
+			if( /^(#!\/~\/)/.test(location.hash)){
+			
+				EcWid.traversing();
+			
+			}else{
+			
+				EcWid.showGoods();
+			}		
+		});
 		
 		// добавим слежение за кликами по ссылкам которые относятся к страницам магазина
 		this.eventListenersOn();
 	};
 	
-	EcWid.createMainFrame = function(){
+	EcWid.createMainFrame = function(callback){
 	
 		
 		/* создадим основной фрейм окна, где все будет размещаться */
 		
-		var mainHolder = document.getElementById( this.windowSelector );
-			mainHolder.className = 'centered floatfix';
+		var mainHolder = document.getElementById( this.windowSelector ),
+			Templates = [];
 			
-		mainHolder.innerHTML = '<table class="ecwidMainTable">'+
-									'<tr>'+
-										'<td id="mainMenu"></td>'+
-									'</tr>'+
-									'<tr>'+
-										'<td id="mainContent"></td>'+
-									'</tr>'+
-								'</table>';
-		
-		// закешируем вышесозданные элементы меню и окно контента	
-		this.menuContainer = mainHolder.querySelector('#mainMenu');					
-		this.contentContainer = mainHolder.querySelector('#mainContent');					
+		mainHolder.className = 'centered floatfix',
+
+		// загрузим темплейт
+		Templates.push( this.loadTemplate('mainframe','EcWid.templates.mainFrame') );
+			
+		// отобразим темплейт
+		Promise.all(Templates).then(function(){
+						
+			mainHolder.innerHTML = EcWid.templates.mainFrame;
+			
+			// закешируем вышесозданные элементы меню и окно контента	
+			EcWid.menuContainer = mainHolder.querySelector('#mainMenu');					
+			EcWid.contentContainer = mainHolder.querySelector('#mainContent');
+			
+			if(callback) callback();
+				
+		});
+						
 	};
 	
 	EcWid.eventListenersOn = function(){

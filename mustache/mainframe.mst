@@ -1,0 +1,11 @@
+<?
+	header('Content-type: application/javascript');
+?>
+<? echo $_GET['var']; ?> = '<table class="ecwidMainTable">'+
+									'<tr>'+
+										'<td id="mainMenu"></td>'+
+									'</tr>'+
+									'<tr>'+
+										'<td id="mainContent"></td>'+
+									'</tr>'+
+								'</table>';
