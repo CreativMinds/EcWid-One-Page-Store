@@ -482,6 +482,7 @@ var EcWid = {
 		}
 		
 		localStorage.setItem('cart', JSON.stringify(this.cart));
+		this.cartRecounter();
 
 	};
 	
