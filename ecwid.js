@@ -40,7 +40,7 @@ var EcWid = {
 	"contentContainer": null,					// dom в который выводится контент: товары, страница товара, корзина
 	"menuContainer": null,						// хранит dom обекта где должно хранится главное меню
 	"cartContainer": null,						// хранит dom обекта коризны на каждой странице 
-	"cart": [],									// корзина, хранит обекты с описанием товаров
+	"cart": {},									// корзина
 	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache', // url дирректории где хранятся шаблоны
 	"templates": {},							// обьект в который мы будем загружать темплейты
 	"currentCategory": null						// категория, в который посетитель в данный момент находится
@@ -300,9 +300,9 @@ var EcWid = {
 		
 		/* обновление информации в лейбле корзины о кол-ве товаров в ней */
 		
-		this.cart = JSON.parse(localStorage.getItem('cart'));	
+		this.cart.items = JSON.parse(localStorage.getItem('cart'));	
 		
-		document.getElementById('cart-goods-counter').innerHTML = this.cart.length;
+		document.getElementById('cart-goods-counter').innerHTML = this.cart.items.length;
 	};
 	
 	EcWid.createMainFrame = function(){
@@ -527,7 +527,7 @@ var EcWid = {
 			Templates = [];
 			
 		// загрузим корзину из local storage
-		this.cart = JSON.parse(localStorage.getItem('cart'));
+		this.cart.items = JSON.parse(localStorage.getItem('cart'));
 		
 		// очистим основное окно от содержимого
 		this.contentContainer.innerHTML = '';
@@ -539,17 +539,20 @@ var EcWid = {
 
 			// добавим в обьекты товаров лежащих в корзине функцию, которая будет отвечать за 
 			// отображение конечной стоимости товара
-			EcWid.cart.forEach(function(element, index){
+			EcWid.cart.items.forEach(function(element, index){
 				
-				EcWid.cart[index].totalPrice = function(){
+				EcWid.cart.items[index].totalPrice = function(){
 				
 					return this.quantity * this.baseProduct.price;
 				}
 			});
 							
 			// отобразим темплейт
-			var rendered = Mustache.render(EcWid.templates.cart, {cart: EcWid.cart});
-			EcWid.contentContainer.innerHTML = rendered;					
+			var rendered = Mustache.render(EcWid.templates.cart, {cart: EcWid.cart.items});
+			EcWid.contentContainer.innerHTML = rendered;
+			
+			// отобразим итоговую стоимость всех товаров
+			EcWid.cart.showTotalPrice( document.getElementById('cartTotalPrice') );					
 
 			// повесим события на кнопки "Удалить товар из корзины"
 			deleteButtons = document.querySelectorAll('[data-btn-type="delete"]');
@@ -570,12 +573,22 @@ var EcWid = {
 				
 				// удаляем из dom
 				el = document.getElementById(button.getAttribute('data-item-id'));
-				el.parentNode.removeChild(el);				
+				el.parentNode.removeChild(el);	
+				
+				// отображаем новую стоимость всех товаров корзины
+				EcWid.cart.showTotalPrice( document.getElementById('cartTotalPrice') );			
 			};
 		}
 	
 	};
 	
+	EcWid.cart.showTotalPrice = function(domElement){
+		
+		/* расчитаем полную стоимость всех товаров в корзине и поместим значение в domElement */
+
+		domElement.innerHTML = this.total();
+		
+	};
 	
 	EcWid.deleteFromCart = function(prodId){
 	
@@ -590,15 +603,15 @@ var EcWid = {
 		
 		var key;
 		
-		for(key in this.cart){
+		for(key in this.cart.items){
 
-			if(this.cart[key].id === prodId){
+			if(this.cart.items[key].id === prodId){
 
-				this.cart.splice(key,1);
+				this.cart.items.splice(key,1);
 			}
 		}
 		
-		localStorage.setItem('cart', JSON.stringify(this.cart));
+		localStorage.setItem('cart', JSON.stringify(this.cart.items));
 		this.cartRecounter();
 
 	};
@@ -644,13 +657,13 @@ var EcWid = {
 		// положим товар в корзину
 		if(localStorage.getItem('cart')) {
 		
-			this.cart = JSON.parse(localStorage.getItem('cart'));
+			this.cart.items = JSON.parse(localStorage.getItem('cart'));
 		}
 		
-		this.cart.push(product);	
+		this.cart.items.push(product);	
 		
 		// сохраним в local storage
-		localStorage.setItem('cart', JSON.stringify(this.cart));
+		localStorage.setItem('cart', JSON.stringify(this.cart.items));
 		
 		// скорректируем UI
 		document.getElementById('go-to-cart-btn').innerHTML = 'Товар добавлен<br><b>Перейти в Корзину</b>';
@@ -658,6 +671,25 @@ var EcWid = {
 		document.getElementById('put-in-cart-btn').style.display = 'none';
 		
 		this.cartRecounter();
+	};
+
+	EcWid.cart.total = function(){
+		
+		/* расчет общей суммы товаров в корзине */
+		
+		var key,
+			total = 0;
+		
+		if(this.items.length < 1) return 0;
+		
+		for(key in this.items){
+			
+			
+			total += this.items[key].quantity * this.items[key].baseProduct.price;
+		}
+		
+		return total;
+			
 	};
 	
 	EcWid.parseOptionValue = function(container, optionType, optionName){

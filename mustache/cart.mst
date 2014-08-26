@@ -32,6 +32,11 @@
 			'<td><button data-btn-type="delete" class="btn btn-default" data-item-id="{{id}}">Удалить</button></td>	'+
 		'</tr>	'+
 		'{{/cart}}	'+
+		'<tr class="footer">	'+
+			'<td colspan=3></td>	'+
+			'<td><span id="cartTotalPrice"></span></td>	'+
+			'<td></td>	'+
+		'</tr>	'+		
 		'</tbody>	'+
 	'</table>	'+
 '</div>	';
