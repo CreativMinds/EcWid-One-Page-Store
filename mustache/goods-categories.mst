@@ -6,7 +6,7 @@
 				'<ul class="goods floatfix"> '+
 					'{{#categories}} '+
 						'<li> '+
-							'<a href="#!/~/category/id={{id}}"><img src="{{thumbnailUrl}}">{{name}}</a> '+
+							'<a href="#!/~/category/category={{id}}"><img src="{{thumbnailUrl}}">{{name}}</a> '+
 						'</li> '+
 					'{{/categories}} '+
 				'</ul>';
