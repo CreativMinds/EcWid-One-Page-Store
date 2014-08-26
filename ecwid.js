@@ -1,46 +1,64 @@
 /*
 
-	showGoods - отображение товаров вместе с категориями
-
+	Используемые библиотеки: 
+	1. underscore (должна подгружаться на странице клиента/владельца магазина, но можно
+	добавить и динамическую загрузку в метод ecwid.init)
+	2. mustache (подгрузка аналогичная underscore)
+	
+	Методы:
+	EcWid.init - инициализация магазина
+	EcWid.loadData - получение данных от product api, возвращает Promise 
+	EcWid.loadTemplate - загрузка темплейтов, возвращает Promise 
+	EcWid.traversing - навигация по магазину
+	EcWid.showGoods - отображение списка товаров
+	EcWid.showProduct - отображение страницы товара
+	EcWid.showCart - отображение корзины с товарами
+	EcWid.gerenateMainMenu - генерация главого меню
+	
+	Примечания:
+	В карточке товара его параметры могут быть типов: select, radio и т.д, в этой версии обрабатывается только select
+	т.к все остальные типы обратаываются схожим образом я не стал их добавлять
+	
 */
+
 
 var EcWid = {
 
 	"categories": [],							// все категории, массив обьектов
 	"products": [],								// все товары выбранной категории, массив обьектов
 	"product": {},								// информация о текущем выбранном продукте
-	"windowSelector": "ecwid-shop",				// там, где будет размещаться весь интерфейс магазина, это может быть div
+	"windowSelector": "ecwid-shop",				// селектор элемента где будет размещаться весь интерфейс магазина
 	"shopId": 5266003,							// id магазина
 	"apiUrl": "http://appdev.ecwid.com/api/v1",	// url ecwid api
 
-	"window": null,								// хранит dom обьект document.getElementById( windowSelector )
+	"window": null,								// хранит dom обьект селектора EcWid.windowSelector 
 												// инициируется при запуске, в init()
 	"goodsWindow": null,						// хранит dom объекта с листингом товаров заданной категории
 												// или без категории. В общем просто контейнер списка товаров
 	"productWindow": null,						// хранит dom обьекта с описанием товара
 	"cartWindow": null,							// по аналогии с productWindow
-	"contentContainer": null,					// хранит dom обьекта где должно хранится гланое меню
-	"menuContainer": null,						// хранит dom обекта где выводятся товары или страница товара
+	"contentContainer": null,					// dom в который выводится контент: товары, страница товара, корзина
+	"menuContainer": null,						// хранит dom обекта где должно хранится главное меню
 	"cartContainer": null,						// хранит dom обекта коризны на каждой странице 
 	"cart": [],									// корзина, хранит обекты с описанием товаров
-	"template": null,
-	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache',
+	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache', // url дирректории где хранятся шаблоны
 	"templates": {},							// обьект в который мы будем загружать темплейты
-	"currentCategory": null
+	"currentCategory": null						// категория, в который посетитель в данный момент находится
 };
 
 	EcWid.loadData = function(controller, jpCallback, callback, params){
 	
 		/* 
-			загрузка данных с главного сервера используя jsonp 
+			Получение данных от Product Api используя jsonp 
 			params - параметры переадваемые в апи в виде обьекта, например {name: 'bob', lastname: 'bobster'}
 			controller - тип данных, которые мы хотим получить, в запросе идет после id магазина, например 
-				api/v1/5266003/categories?
-				api/v1/5266003/products?
+				api/v1/5266003/categories?...
+				api/v1/5266003/products?...
 			jpCallback - jsonp callback
 			callback - запускается по завершению загрузки данных, на onload событии тега script, запускается 
 						с передачей главного обьекта: callback.call(EcWid)
 			
+			Принцип работы:
 			Сформируем <script> тег с src вида 
 			http://appdev.ecwid.com/api/v1/5266003/categories?callback=EcWid.getCategories
 			вставим его в документ, и удалим после выполнения
@@ -89,7 +107,11 @@ var EcWid = {
 	EcWid.loadTemplate = function(templateName, templateVar, callback){
 		
 		
-	/* загрузим темплейт templateName и поместим его в указанную переменную templateVar в обьект EcWid.templates */
+	/* 
+		загрузим темплейт templateName и поместим его в указанную переменную templateVar в обьект EcWid.templates 
+		Например такой вызов метода: EcWid.loadTemplate('tpl-products','products') 
+		загрузит темплейт 'tpl-products' в EcWid.templates.products
+	*/
 
 		return new Promise(function(resolve, reject){
 			
@@ -135,8 +157,7 @@ var EcWid = {
 				limit: null,				// число результатов в выдаче, null - нет ограничения
 				category: null				// id категории, null - все товары
 			},
-			key,
-			tplPromise;						// promise обьект для загрузки шаблона
+			key;
 		
 		// перезапишем настройки если они были переданы
 		if(paramsObj){
@@ -148,20 +169,23 @@ var EcWid = {
 		// очистим основное окно от содержимого
 		this.contentContainer.innerHTML = '';
 				
-		// получим товары и отобразим их, а также субкатегории текущей категории
+		// получим товары, а также субкатегории текущей категории, и отобразим их
 		this.loadData('products','EcWid.getProducts',function(){
 			
 			var subCategories = null,
 				Promises = [],
-				partials = {};
+				partials = {};			// хранит в свойствах отдельные части общего темплейта (template partials)
 			
+			// вычленим суб категории из массива хранящего все категории
 			subCategories = _.filter(EcWid.categories, function(item){
 					
 				return EcWid.currentCategory == item.parentId;	
 			});
 			
+			// загрузим темплейт отвечающий за вывод списка товаров
 			Promises.push( this.loadTemplate('goods','goods') );
 			
+			// загрузим темплейт отвечающий за вывод списка категорий
 			if(subCategories !== null){
 			
 				Promises.push( this.loadTemplate('goods-categories','goodsCategories') );
@@ -181,7 +205,7 @@ var EcWid = {
 								categories: subCategories
 				},partials);
 				
-				// если у товара или категории нет фото, установим общее через установку класса 
+				// если у товара или категории нет фото, установим общее фото через установку класса 
 				rendered = rendered.replace(/img src=""/g,'img src="" class="noimage" ');
 
 				EcWid.contentContainer.innerHTML = rendered;					
@@ -190,42 +214,6 @@ var EcWid = {
 		},params);
 		
 	};	
-
-	EcWid.showCategories = function(paramsObj){
-	
-	
-		/* Отображение категорий в основном окне (не в меню) */
-		
-		var	params = {			// настройки по умолчанию
-				limit: null,						// число результатов в выдаче, null - нет ограничения
-				parentCategory: null				// id родительской категории
-			},
-			key,
-			tplPromise;						// promise обьект для загрузки шаблона
-		
-		// перезапишем настройки если они были переданы
-		if(paramsObj){
-			for(key in paramsObj){
-				params[key] = paramsObj[key];
-			}
-		}
-
-		// очистим основное окно от содержимого
-		this.contentContainer.innerHTML = '';
-				
-		// отобразим категории
-		this.loadData('products','EcWid.getProducts',function(){
-			
-			tplPromise = this.loadTemplate('goods','goods');
-				
-			tplPromise.then(function(){
-				var rendered = Mustache.render(EcWid.templates.goods, {products: EcWid.products});
-				EcWid.contentContainer.innerHTML = rendered;					
-			});
-						
-		},params);
-		
-	};
 
 
 	EcWid.getProducts = function(products){
@@ -320,7 +308,10 @@ var EcWid = {
 	EcWid.createMainFrame = function(){
 	
 		
-		/* создадим основной фрейм окна, где все будет размещаться */
+		/* 
+			создадим основной фрейм окна, где все (меню, товары, категории и т.д) будет размещаться 
+			создание происходит на основе темплейта EcWid.templates.mainFrame загруженного ранее в ecwid.init
+		*/
 		
 		var mainHolder = document.getElementById( this.windowSelector );
 			
@@ -348,7 +339,7 @@ var EcWid = {
 		
 		// ф-я отвечает за перемещение пользователя по магазину, отслеживая хэш теги в url
 		
-		var controller,				// контроллер, это например product в строке url "#!/~/products/..."
+		var controller,				// контроллер, это например products в строке url "#!/~/products/..."
 			params = {},			// обьект с параметрами вида {id: 123, offset: 1, sortby: "date"}
 									// генерируем его динамически путем парсинга строки идущей после
 									// контроллера, строка вида /prodicts/id=5&sortby=date где products - контроллер
@@ -369,7 +360,9 @@ var EcWid = {
 		paramsRawArr = location.hash.substr(location.hash.lastIndexOf('/')+1).split('&');
 		
 		if(paramsRawArr[0].indexOf('=') == -1){
+		
 			params = {};
+		
 		}else{
 			
 			for(key in paramsRawArr){
@@ -399,14 +392,12 @@ var EcWid = {
 		// пользователь запросил товар
 		if(controller === 'product'){
 			
-			//this.showProduct(params);
 			this.showProduct(params);
 		}
 
 		// пользователь перешел в корзину
 		if(controller === 'cart'){
 			
-			//this.showCart();
 			this.showCart();
 		}
 	}
@@ -491,8 +482,7 @@ var EcWid = {
 		Promise.all(Templates).then(function(){
 
 			// добавим в обьекты товаров лежащих в корзине функцию, которая будет отвечать за 
-			//отображение конечной стоимости товара
-			// формула: кол-во * стоимость
+			// отображение конечной стоимости товара
 			EcWid.cart.forEach(function(element, index){
 				
 				EcWid.cart[index].totalPrice = function(){
@@ -560,7 +550,8 @@ var EcWid = {
 	EcWid.addToCart = function(){
 	
 		
-		// добавление товара в корзину
+		/* добавление товара в корзину */
+		
 		var product = {},
 			optionContainers,			// div элементы в которых содержатся input / select и прочие элементы
 										// со значениями опций.
@@ -616,8 +607,7 @@ var EcWid = {
 	EcWid.parseOptionValue = function(container, optionType, optionName){
 	
 		
-		// пропарсим dom контейнер который хранит select/input и другие form элементы, в которых пользователь
-		// на странице товара указал нужные ему данные, выбрал нужные ему опции
+		// пропарсим dom контейнер (типы: select/radio/input) который хранит параметры товара
 
 		if(optionType === 'RADIO'){
 		
@@ -637,10 +627,7 @@ var EcWid = {
 	EcWid.gerenateMainMenu = function(){
 	
 		/*  
-			Каждая категория находится внутри li элементов, поэтому для каждой категории нужно создать свой <LI>.
-			Для каждой категории имеющей в себе субы, нужно создать свой <UL>, в который мы потом их поместим
-			чтобы обьеденить в группу. Когда у нас будут ul и li нужно совместить их, все <li> имеющие родителя 
-			поместить в ul родителя, а сам ul в li родителя. После нужно все это поместить в главный контейнер меню.
+			Геренация главного меню
 		*/
 		
 		var liCategories = [],
@@ -658,7 +645,8 @@ var EcWid = {
 			
 			this.menuContainer.appendChild(mainContainer);
 			
-		// получим из необработанного массива с категориями более структурированные данные
+		// получим из необработанного массива с категориями более структурированные данные,
+		// а именно CategoriesWithSubs и rootCategories (описание в разделе var)
 		for(key in this.categories){
 		
 			if(EcWid.categories[key].parentId){
