@@ -1,7 +1,11 @@
 <?
 	header('Content-type: application/javascript');
 ?>
-<? echo $_GET['var']; ?> = '<ul class="goods floatfix"> '+
+<? echo $_GET['var']; ?> = ''+
+
+'{{>categoriesTpl}}' +
+
+'<span class="goods-title">Товары</span><ul class="goods floatfix"> '+
 	'{{#products}} '+
 		'<li> '+
 			'<a href="#!/~/product/id={{id}}"><img src="{{imageUrl}}">{{name}}</a> '+

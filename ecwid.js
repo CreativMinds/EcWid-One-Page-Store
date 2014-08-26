@@ -1,6 +1,6 @@
 /*
 
-	
+	showGoods - отображение товаров вместе с категориями
 
 */
 
@@ -25,7 +25,8 @@ var EcWid = {
 	"cart": [],									// корзина, хранит обекты с описанием товаров
 	"template": null,
 	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache',
-	"templates": {}								// обьект в который мы будем загружать темплейты
+	"templates": {},							// обьект в который мы будем загружать темплейты
+	"currentCategory": null
 };
 
 	EcWid.loadData = function(controller, jpCallback, callback, params){
@@ -45,39 +46,43 @@ var EcWid = {
 			вставим его в документ, и удалим после выполнения
 		*/
 		
-		var script,
-			body = document.getElementsByTagName('body')[0],
-			paramString = '',
-			key;
+		return new Promise(function(resolve, reject){
 		
-		// сформируем строку параметров
-		if(params){
+			var script,
+				body = document.getElementsByTagName('body')[0],
+				paramString = '',
+				key;
 			
-			for(key in params){
+			// сформируем строку параметров
+			if(params){
 				
-				if(params[key] !== null){
-					paramString += '&' + key + '=' + params[key];
+				for(key in params){
+					
+					if(params[key] !== null){
+						paramString += '&' + key + '=' + params[key];
+					}
+					
 				}
-				
 			}
-		}
-		
-		// сгенерируем script тег и вставим его в документ, после чего сделаем так, чтобы он запустил
-		// колбэк и удалил себя, когда завершится загрузка данных	
-		script = document.createElement('script');
 			
-		script.src = this.apiUrl + 
-						'/' + this.shopId + 
-						'/' + controller + 
-						'?callback=' + jpCallback + paramString;				
-		
-		script.onload = function(){
+			// сгенерируем script тег и вставим его в документ, после чего сделаем так, чтобы он запустил
+			// колбэк и удалил себя, когда завершится загрузка данных	
+			script = document.createElement('script');
 				
-				callback.call(EcWid);
-				this.parentElement.removeChild(this);
-			};			
-		
-		body.appendChild(script);
+			script.src = EcWid.apiUrl + 
+							'/' + EcWid.shopId + 
+							'/' + controller + 
+							'?callback=' + jpCallback + paramString;				
+			
+			script.onload = function(){
+					
+					if(callback) callback.call(EcWid);
+					this.parentElement.removeChild(this);
+					resolve();
+				};			
+			
+			body.appendChild(script);
+		});
 	};
 
 
@@ -85,7 +90,7 @@ var EcWid = {
 		
 		
 	/* загрузим темплейт templateName и поместим его в указанную переменную templateVar в обьект EcWid.templates */
-		
+
 		return new Promise(function(resolve, reject){
 			
 			var script,
@@ -93,7 +98,7 @@ var EcWid = {
 			
 			// не будем загружать темплейт, если он был загружен ранее
 			if(EcWid.templates[templateVar]){
-				
+
 				if(callback) callback();
 				resolve();	
 				return;			
@@ -143,7 +148,72 @@ var EcWid = {
 		// очистим основное окно от содержимого
 		this.contentContainer.innerHTML = '';
 				
-		// получим товары и отобразим их
+		// получим товары и отобразим их, а также субкатегории текущей категории
+		this.loadData('products','EcWid.getProducts',function(){
+			
+			var subCategories = null,
+				Promises = [],
+				partials = {};
+			
+			subCategories = _.filter(EcWid.categories, function(item){
+					
+				return EcWid.currentCategory == item.parentId;	
+			});
+			
+			Promises.push( this.loadTemplate('goods','goods') );
+			
+			if(subCategories !== null){
+			
+				Promises.push( this.loadTemplate('goods-categories','goodsCategories') );
+			}
+			
+			Promise.all(Promises).then(function(){
+				
+				var rendered;
+				
+				if(subCategories.length > 0){
+		
+					partials.categoriesTpl = EcWid.templates.goodsCategories;
+				}
+				
+				rendered = Mustache.render(EcWid.templates.goods, {
+								products: EcWid.products, 
+								categories: subCategories
+				},partials);
+				
+				// если у товара или категории нет фото, установим общее через установку класса 
+				rendered = rendered.replace(/img src=""/g,'img src="" class="noimage" ');
+
+				EcWid.contentContainer.innerHTML = rendered;					
+			});
+						
+		},params);
+		
+	};	
+
+	EcWid.showCategories = function(paramsObj){
+	
+	
+		/* Отображение категорий в основном окне (не в меню) */
+		
+		var	params = {			// настройки по умолчанию
+				limit: null,						// число результатов в выдаче, null - нет ограничения
+				parentCategory: null				// id родительской категории
+			},
+			key,
+			tplPromise;						// promise обьект для загрузки шаблона
+		
+		// перезапишем настройки если они были переданы
+		if(paramsObj){
+			for(key in paramsObj){
+				params[key] = paramsObj[key];
+			}
+		}
+
+		// очистим основное окно от содержимого
+		this.contentContainer.innerHTML = '';
+				
+		// отобразим категории
 		this.loadData('products','EcWid.getProducts',function(){
 			
 			tplPromise = this.loadTemplate('goods','goods');
@@ -155,13 +225,8 @@ var EcWid = {
 						
 		},params);
 		
-	};	
-	
-	EcWid.getCategories = function(categories){
-		// jsonp функция,получение всего списка категорий
-		
-		this.categories = categories;
 	};
+
 
 	EcWid.getProducts = function(products){
 		// jsonp функция, получение всего списка товаров
@@ -175,34 +240,51 @@ var EcWid = {
 		this.product = product;
 	};	
 	
+	EcWid.getCategories = function(categories){
+		// jsonp функция, получение списка категорий
+		
+		this.categories = categories;
+	};	
+
+	
 	EcWid.init = function(){
 	
+		var Promises = [];
 		
-		// создадим основной фрейм окна, где все будет размещаться, а когда оно будет создано запустим 
-		// коллбэк который продолжит с ним работу 
-		this.createMainFrame(function(){
 		
-			// инициируем главное окно магазина, там где будет размещаться весь интерфейс
+		// загрузим все категории которые есть в магазине в переменную EcWid.getCategories
+		// загрузим темплейт каркаса страницы
+		Promises.push( this.loadData('categories','EcWid.getCategories') );
+		Promises.push( this.loadTemplate('mainframe','mainFrame') );
+		
+		// когда все загрузится, начнем создавать страницу
+		Promise.all(Promises).then(function(){
+
+			// создадим каркас страницы на основе шаблона
+			EcWid.createMainFrame();
+	
+			// закэшируем главное окно магазина, там где будет размещаться весь интерфейс
 			EcWid.window = document.getElementById( EcWid.windowSelector );
-			
-			// загрузим категории и создадим на их основе главное меню
-			EcWid.loadData('categories','EcWid.getCategories',EcWid.gerenateMainMenu);
-			
+				
+			// создадим главное меню
+			EcWid.gerenateMainMenu();
+
 			// отобразим блок корзины 
-			EcWid.showCartLabel();
-			
+			EcWid.showCartLabel();	
+
 			// проверим на какую страницу магазина нужно перейти при его инициации
 			// в норме, это главная страница, но возможно человек делает свой первый вход сразу на страницу товара?
-			// для этого отслеживаем наличие хэша магазина в url ("#!/~/some-page")
+			// для этого отслеживаем наличие хэша магазина в url ("#!/~/some-page/")
 			if( /^(#!\/~\/)/.test(location.hash)){
-			
+				
 				EcWid.traversing();
-			
+				
 			}else{
-			
+					
 				EcWid.showGoods();
-			}		
-		});
+			}
+	
+	});	
 		
 		// добавим слежение за кликами по ссылкам которые относятся к страницам магазина
 		this.eventListenersOn();
@@ -235,33 +317,21 @@ var EcWid = {
 		document.getElementById('cart-goods-counter').innerHTML = this.cart.length;
 	};
 	
-	EcWid.createMainFrame = function(callback){
+	EcWid.createMainFrame = function(){
 	
 		
 		/* создадим основной фрейм окна, где все будет размещаться */
 		
-		var mainHolder = document.getElementById( this.windowSelector ),
-			Templates = [];
+		var mainHolder = document.getElementById( this.windowSelector );
 			
 		mainHolder.className = 'centered floatfix',
 
-		// загрузим темплейт
-		Templates.push( this.loadTemplate('mainframe','mainFrame') );
+		mainHolder.innerHTML = EcWid.templates.mainFrame;
 			
-		// отобразим темплейт
-		Promise.all(Templates).then(function(){
-						
-			mainHolder.innerHTML = EcWid.templates.mainFrame;
-			
-			// закешируем вышесозданные элементы меню и окно контента	
-			EcWid.menuContainer = mainHolder.querySelector('#mainMenu');					
-			EcWid.contentContainer = mainHolder.querySelector('#mainContent');
-			EcWid.cartContainer = mainHolder.querySelector('#cart');
-			
-			if(callback) callback();
-				
-		});
-						
+		// закешируем вышесозданные элементы меню и окно контента	
+		EcWid.menuContainer = mainHolder.querySelector('#mainMenu');					
+		EcWid.contentContainer = mainHolder.querySelector('#mainContent');
+		EcWid.cartContainer = mainHolder.querySelector('#cart');
 	};
 	
 	EcWid.eventListenersOn = function(){
@@ -322,6 +392,7 @@ var EcWid = {
 		// пользователь запросил категорию
 		if(controller === 'category'){
 			
+			EcWid.currentCategory = params.category;
 			this.showGoods(params);
 		}
 		

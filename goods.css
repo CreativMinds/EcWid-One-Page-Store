@@ -1,13 +1,22 @@
+span.goods-title{
+	
+	display: block;
+	padding-left: 2%;
+	padding-bottom: 5px;
+	margin-top: 20px;
+	font-size: 1.2em;	
+}
+
 ul.goods{
 	
 	list-style:none;
 	margin:0;
 	padding:0;
 	clear: both;
-	padding-top:20px;
+#	padding-top:20px;
 
 	background: #fff;
-	margin-top: 10px;
+#	margin-top: 10px;
 	border-radius: 5px;
 }
 
@@ -22,10 +31,12 @@ ul.goods li{
 
 ul.goods li img{
 	max-width:90%;
+	max-height:190px;
 	margin-bottom:10px;
 	display: block;
 	margin:0 auto 10px;
 }
+
 ul.goods li img.noimage{
 	background:url('i/noimage.png');
 	background-size: 50% 50%;
@@ -34,6 +45,7 @@ ul.goods li img.noimage{
 	min-width:90%;
 	max-width:90%;
 	min-height:160px;
+	opacity:0.2;
 }
 ul.goods li a{
 	display: block;
