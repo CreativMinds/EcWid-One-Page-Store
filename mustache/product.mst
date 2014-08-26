@@ -4,6 +4,17 @@
 <? echo $_GET['var']; ?> = '<div class="product-window floatfix">   '+
  
 	'<div class="prod-image">   '+
+		
+		'<ul class="prod-categories">   '+
+			'<li>Категории:</li>	'+
+			'{{#categoriesChain}}   '+
+				
+				'<li class="name" data-order="{{order}}">	'+
+				'<a href="#!/~/category/category={{id}}">{{name}}</a></li>   '+
+			
+			'{{/categoriesChain}}   '+
+		'</ul>   '+
+	
 		'<img src="{{product.imageUrl}}">   '+
 	'</div>		   '+
 

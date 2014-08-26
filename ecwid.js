@@ -446,7 +446,12 @@ var EcWid = {
 				});
 				
 				// отобразим темплейт
-				var rendered = Mustache.render(EcWid.templates.product, {product: EcWid.product});
+				var rendered = Mustache.render(EcWid.templates.product, 
+						{
+							product: EcWid.product,
+							categoriesChain: EcWid.getCategoriesChain(EcWid.currentCategory)
+						}
+				);
 				EcWid.contentContainer.innerHTML = rendered;					
 
 				// привяжем события
@@ -459,6 +464,50 @@ var EcWid = {
 		
 	};
 
+	EcWid.getCategoriesChain = function(categoryId){
+	
+		/* вернет массив с обектами категорий родителей categoryId упорядоченными по порядку  */
+		
+		var categories = [],
+			catItem,
+			chainEnd = false;
+		
+		var output = function(){
+			
+			var key;
+			
+			for(key in categories){
+				
+				categories[key].order = key;
+			}
+			
+			return categories;
+			
+		};
+		
+		if(categoryId === null){
+			
+			categoryId = _.findWhere(EcWid.product.categories, {defaultCategory: true}).id;
+		}
+		
+		if(categoryId === undefined) return categories;
+				
+		catItem = _.findWhere(EcWid.categories, {id: parseInt(categoryId)});
+		categories.push( catItem );
+				
+		if(!catItem.parentId) return output();
+				
+		while(chainEnd === false){
+					
+			catItem = _.findWhere(EcWid.categories, {id: catItem.parentId});
+			
+			catItem === undefined ? chainEnd = true : categories.unshift( catItem );
+			
+			if(!catItem.parentId) chainEnd = true;
+		}	
+
+		return output();
+	};
 
 	EcWid.showCart = function(){
 	
