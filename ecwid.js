@@ -291,20 +291,10 @@ var EcWid = {
 		Promise.all(Templates).then(function(){
 			
 			EcWid.cartContainer.innerHTML = EcWid.templates.cartLabel;
-			EcWid.cartRecounter();
+			EcWid.cart.recounter();
 		});
 	};
-	
-	EcWid.cartRecounter = function(){
-	
-		
-		/* обновление информации в лейбле корзины о кол-ве товаров в ней */
-		
-		this.cart.items = JSON.parse(localStorage.getItem('cart'));	
-		
-		document.getElementById('cart-goods-counter').innerHTML = this.cart.items.length;
-	};
-	
+
 	EcWid.createMainFrame = function(){
 	
 		
@@ -426,7 +416,7 @@ var EcWid = {
 			var template = '',		// базовый темплейт карточки товара
 				el, ul, li,			// dom контейнеры
 				key,				// просто индекс
-				addToCartbounded = this.addToCart.bind(this),	// привязанная функция для event listener 
+				addToCartbounded = EcWid.cart.add.bind(EcWid.cart),	// привязанная функция для event listener 
 				Templates = [];
 			
 			// загрузим темплейты
@@ -569,7 +559,7 @@ var EcWid = {
 			return function(){
 				
 				// удаляем из коризны
-				EcWid.deleteFromCart( button.getAttribute('data-item-id') );
+				EcWid.cart.remove( button.getAttribute('data-item-id') );
 				
 				// удаляем из dom
 				el = document.getElementById(button.getAttribute('data-item-id'));
@@ -590,7 +580,7 @@ var EcWid = {
 		
 	};
 	
-	EcWid.deleteFromCart = function(prodId){
+	EcWid.cart.remove = function(prodId){
 	
 	
 		/* 
@@ -603,24 +593,24 @@ var EcWid = {
 		
 		var key;
 		
-		for(key in this.cart.items){
+		for(key in this.items){
 
-			if(this.cart.items[key].id === prodId){
+			if(this.items[key].id === prodId){
 
-				this.cart.items.splice(key,1);
+				this.items.splice(key,1);
 			}
 		}
 		
-		localStorage.setItem('cart', JSON.stringify(this.cart.items));
-		this.cartRecounter();
+		localStorage.setItem('cart', JSON.stringify(this.items));
+		EcWid.cart.recounter();
 
 	};
-	
-	EcWid.addToCart = function(){
+
+	EcWid.cart.add = function(){
 	
 		
 		/* добавление товара в корзину */
-		
+				
 		var product = {},
 			optionContainers,			// div элементы в которых содержатся input / select и прочие элементы
 										// со значениями опций.
@@ -628,8 +618,8 @@ var EcWid = {
 			optionType, optionName, optionValue;							
 		
 		// запишем базовую информацию о товаре
-		product.id = this.product.id;
-		product.baseProduct = this.product;
+		product.id = EcWid.product.id;
+		product.baseProduct = EcWid.product;
 		product.options = [];	
 		
 		// узнаем какие опции были выбраны
@@ -641,7 +631,7 @@ var EcWid = {
 			optionType = optionContainers[i].getAttribute('data-option-type');
 			optionName = optionContainers[i].getAttribute('data-option-name');
 			
-			optionValue = this.parseOptionValue(optionContainers[i], optionType, optionName);
+			optionValue = EcWid.parseOptionValue(optionContainers[i], optionType, optionName);
 			
 			if(optionValue !== undefined){
 				product.options.push({
@@ -657,20 +647,20 @@ var EcWid = {
 		// положим товар в корзину
 		if(localStorage.getItem('cart')) {
 		
-			this.cart.items = JSON.parse(localStorage.getItem('cart'));
+			this.items = JSON.parse(localStorage.getItem('cart'));
 		}
 		
-		this.cart.items.push(product);	
+		this.items.push(product);	
 		
 		// сохраним в local storage
-		localStorage.setItem('cart', JSON.stringify(this.cart.items));
+		localStorage.setItem('cart', JSON.stringify(this.items));
 		
 		// скорректируем UI
 		document.getElementById('go-to-cart-btn').innerHTML = 'Товар добавлен<br><b>Перейти в Корзину</b>';
 		document.getElementById('go-to-cart-btn').style.display = 'block';
 		document.getElementById('put-in-cart-btn').style.display = 'none';
 		
-		this.cartRecounter();
+		EcWid.cart.recounter();
 	};
 
 	EcWid.cart.total = function(){
@@ -690,6 +680,16 @@ var EcWid = {
 		
 		return total;
 			
+	};
+
+	EcWid.cart.recounter = function(){
+	
+		
+		/* обновление информации в лейбле корзины о кол-ве товаров в ней */
+		
+		this.items = JSON.parse(localStorage.getItem('cart'));	
+		
+		document.getElementById('cart-goods-counter').innerHTML = this.items.length;
 	};
 	
 	EcWid.parseOptionValue = function(container, optionType, optionName){

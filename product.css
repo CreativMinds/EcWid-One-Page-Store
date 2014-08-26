@@ -100,3 +100,7 @@ ul.prod-categories li.name[data-order="0"]:before{
 	content: " ";
 	padding:0;
 }
+
+#cartTotalPrice{
+	font-weight: bold;
+}
