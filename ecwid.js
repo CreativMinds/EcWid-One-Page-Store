@@ -474,6 +474,11 @@ var EcWid = {
 		
 		var output = function(){
 			
+			// функция отвечает за возврат ответа ее родительского метода
+			// благодаря ей мы вернем не просто массив categories, а массив categories в котором у каждого
+			// обьекта будет свой порядковый номер записанный в свойство order.
+			// это поле удобно иметь при работе с категориями внутри темплейтов
+			
 			var key;
 			
 			for(key in categories){
@@ -485,13 +490,15 @@ var EcWid = {
 			
 		};
 		
+		// если текущая категория не известна, возьмем дефолтную категорию продукта
 		if(categoryId === null){
 			
 			categoryId = _.findWhere(EcWid.product.categories, {defaultCategory: true}).id;
 		}
 		
 		if(categoryId === undefined) return categories;
-				
+		
+		// занесем обьекты категорий в массив		
 		catItem = _.findWhere(EcWid.categories, {id: parseInt(categoryId)});
 		categories.push( catItem );
 				
