@@ -1,1 +1,0 @@
-EcWid.template = 'Hello {{ name }}!';
