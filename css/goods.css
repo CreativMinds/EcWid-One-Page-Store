@@ -38,7 +38,7 @@ ul.goods li img{
 }
 
 ul.goods li img.noimage{
-	background:url('i/noimage.png');
+	background:url('../i/noimage.png');
 	background-size: 50% 50%;
 	background-position: center;
 	background-repeat: no-repeat;
