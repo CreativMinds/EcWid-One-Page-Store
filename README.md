@@ -16,3 +16,8 @@ Docs
 ====
 
 Description of methods and configuration parametrs is in js/ecwid.js
+
+Demo
+====
+
+You can see how it works on http://bookjs.ru/
