@@ -41,8 +41,9 @@
 	'</div>   '+
 	
 	'<div class="cart-btn">   '+
-		'<button class="btn btn-default" id="put-in-cart-btn">В корзину</button>   '+
-		'<a href="#!/~/cart/"><button class="btn btn-success" id="go-to-cart-btn">Перейти в Коризину</button></a>   '+
+		'<button class="btn btn-default" id="put-in-cart-btn" data-role="put-in-cart-btn">В корзину</button>   '+
+		'<a href="#!/~/cart/"><button class="btn btn-success" id="go-to-cart-btn" data-role="go-to-cart-btn">	'+
+		'Перейти в Коризину</button></a>   '+
 	'</div>   '+
 	
 	'</div>   '+																																

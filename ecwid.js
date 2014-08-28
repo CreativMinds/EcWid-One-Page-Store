@@ -1,5 +1,11 @@
 /*
 
+	Отвязать код от стилей, привязать к аттрибутам вида data-block, data-role и т.д
+
+*/
+
+/*
+
 	Используемые библиотеки: 
 	1. underscore (должна подгружаться на странице клиента/владельца магазина, но можно
 	добавить и динамическую загрузку в метод ecwid.init)
@@ -41,7 +47,7 @@ var EcWid = {
 	"menuContainer": null,						// хранит dom обекта где должно хранится главное меню
 	"cartContainer": null,						// хранит dom обекта коризны на каждой странице 
 	"cart": {},									// корзина
-	"templateUrl": 'http://ftpbuzz.ru/ecwid/mustache', // url дирректории где хранятся шаблоны
+	"templateUrl": 'http://bookjs.ru/mustache', // url дирректории где хранятся шаблоны
 	"templates": {},							// обьект в который мы будем загружать темплейты
 	"currentCategory": null						// категория, в который посетитель в данный момент находится
 };
@@ -446,7 +452,7 @@ var EcWid = {
 
 				// привяжем события
 				// на кнопку Положить в корзину
-				document.getElementById('put-in-cart-btn').addEventListener('click', addToCartbounded, false);
+				document.querySelector('[data-role="put-in-cart-btn"]').addEventListener('click', addToCartbounded, false);
 						
 			});
 				
@@ -542,7 +548,7 @@ var EcWid = {
 			EcWid.contentContainer.innerHTML = rendered;
 			
 			// отобразим итоговую стоимость всех товаров
-			EcWid.cart.showTotalPrice( document.getElementById('cartTotalPrice') );					
+			EcWid.cart.showTotalPrice( document.querySelector('[data-block="cartTotalPrice"]') );					
 
 			// повесим события на кнопки "Удалить товар из корзины"
 			deleteButtons = document.querySelectorAll('[data-btn-type="delete"]');
@@ -566,7 +572,7 @@ var EcWid = {
 				el.parentNode.removeChild(el);	
 				
 				// отображаем новую стоимость всех товаров корзины
-				EcWid.cart.showTotalPrice( document.getElementById('cartTotalPrice') );			
+				EcWid.cart.showTotalPrice( document.querySelector('[data-block="cartTotalPrice"]') );			
 			};
 		}
 	
@@ -649,16 +655,19 @@ var EcWid = {
 		
 			this.items = JSON.parse(localStorage.getItem('cart'));
 		}
-		
+		else{
+			this.items = [];
+		}
+	
 		this.items.push(product);	
 		
 		// сохраним в local storage
 		localStorage.setItem('cart', JSON.stringify(this.items));
 		
 		// скорректируем UI
-		document.getElementById('go-to-cart-btn').innerHTML = 'Товар добавлен<br><b>Перейти в Корзину</b>';
-		document.getElementById('go-to-cart-btn').style.display = 'block';
-		document.getElementById('put-in-cart-btn').style.display = 'none';
+		document.querySelector('[data-role="go-to-cart-btn"]').innerHTML = 'Товар добавлен<br><b>Перейти в Корзину</b>';
+		document.querySelector('[data-role="go-to-cart-btn"]').style.display = 'block';
+		document.querySelector('[data-role="put-in-cart-btn"]').style.display = 'none';
 		
 		EcWid.cart.recounter();
 	};
@@ -688,8 +697,8 @@ var EcWid = {
 		/* обновление информации в лейбле корзины о кол-ве товаров в ней */
 		
 		this.items = JSON.parse(localStorage.getItem('cart'));	
-		
-		document.getElementById('cart-goods-counter').innerHTML = this.items.length;
+
+		document.querySelector('[data-block="cart-goods-counter"]').innerHTML = this.items.length;
 	};
 	
 	EcWid.parseOptionValue = function(container, optionType, optionName){

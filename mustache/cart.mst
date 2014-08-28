@@ -34,7 +34,7 @@
 		'{{/cart}}	'+
 		'<tr class="footer">	'+
 			'<td colspan=3></td>	'+
-			'<td><span id="cartTotalPrice"></span></td>	'+
+			'<td><span id="cartTotalPrice" data-block="cartTotalPrice"></span></td>	'+
 			'<td></td>	'+
 		'</tr>	'+		
 		'</tbody>	'+
