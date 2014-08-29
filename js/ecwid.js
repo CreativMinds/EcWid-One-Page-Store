@@ -1,5 +1,12 @@
 /*
 
+	shop profile settings (objects + render functions)
+	dynamic styles and libs uploader
+	
+*/
+
+/*
+
 	Используемые библиотеки: 
 	1. underscore (должна подгружаться на странице клиента/владельца магазина, но можно
 	добавить и динамическую загрузку в метод ecwid.init)
@@ -27,6 +34,7 @@ var EcWid = {
 	"categories": [],							// все категории, массив обьектов
 	"products": [],								// все товары выбранной категории, массив обьектов
 	"product": {},								// информация о текущем выбранном продукте
+	"shopProfile": {},							// настройки магазина (валюта, система весов название, и т.д )
 	"windowSelector": "ecwid-shop",				// селектор элемента где будет размещаться весь интерфейс магазина
 	"shopId": 5266003,							// id магазина
 	"apiUrl": "http://appdev.ecwid.com/api/v1",	// url ecwid api
@@ -41,6 +49,8 @@ var EcWid = {
 	"menuContainer": null,						// хранит dom обекта где должно хранится главное меню
 	"cartContainer": null,						// хранит dom обекта коризны на каждой странице 
 	"cart": {},									// корзина
+	"localize": {},								// модуль отвечающий за локализацию значений в соответствии с настройками
+												// магазина. Локализует значения цен, весов и т.д
 	"templateUrl": 'http://bookjs.ru/mustache', // url дирректории где хранятся шаблоны
 	"templates": {},							// обьект в который мы будем загружать темплейты
 	"currentCategory": null						// категория, в который посетитель в данный момент находится
@@ -227,6 +237,12 @@ var EcWid = {
 		
 		this.product = product;
 	};	
+
+	EcWid.getProfile = function(profile){
+		// jsonp функция, получение информации о настройках магазина
+		
+		this.shopProfile = profile;
+	};
 	
 	EcWid.getCategories = function(categories){
 		// jsonp функция, получение списка категорий
@@ -243,6 +259,7 @@ var EcWid = {
 		// загрузим все категории которые есть в магазине в переменную EcWid.getCategories
 		// загрузим темплейт каркаса страницы
 		Promises.push( this.loadData('categories','EcWid.getCategories') );
+		Promises.push( this.loadData('profile','EcWid.getProfile') );
 		Promises.push( this.loadTemplate('mainframe','mainFrame') );
 		
 		// когда все загрузится, начнем создавать страницу
@@ -426,14 +443,24 @@ var EcWid = {
 			// отобразим темплейты
 			Promise.all(Templates).then(function(){
 				
-				// добавим в обьекты опций функцию которая будет отвечать за их рендеринг
+				// добавим функции рендеринга:
+				// в обьекты опций
 				EcWid.product.options.forEach(function(element, index){
 					
+					// функция отвечает за отображение опции, например radio и select нужно отобразить по разному
 					EcWid.product.options[index].render = function(){
 					
 						return Mustache.render('{{>'+this.type+'}}', this, {SELECT: EcWid.templates.productSelect});
 					}
 				});
+				
+				// в обьект продукта
+				EcWid.product.renderedPrice = function(){
+				
+					// ф-я отвечает за вывод цены в формате заданном настройками магазина
+					
+					return EcWid.localize.price( this.product.price );
+				};
 				
 				// отобразим темплейт
 				var rendered = Mustache.render(EcWid.templates.product, 
@@ -533,8 +560,22 @@ var EcWid = {
 				
 				EcWid.cart.items[index].totalPrice = function(){
 				
-					return this.quantity * this.baseProduct.price;
+					// ф-я отвечает за вывод общей стоимости конкретного товара: цена * кол-во
+
+					var totalPrice = this.quantity * this.baseProduct.price;
+				
+					return EcWid.localize.price( totalPrice );					
 				}
+				
+				// в обьект продукта
+				EcWid.cart.items[index].renderedPrice = function(){
+				
+					// ф-я отвечает за вывод цены в формате заданном настройками магазина
+
+					return EcWid.localize.price( this.baseProduct.price );
+					
+				};
+								
 			});
 							
 			// отобразим темплейт
@@ -576,7 +617,7 @@ var EcWid = {
 		
 		/* расчитаем полную стоимость всех товаров в корзине и поместим значение в domElement */
 
-		domElement.innerHTML = this.total();
+		domElement.innerHTML = EcWid.localize.price( this.total() );
 		
 	};
 	
@@ -787,5 +828,17 @@ var EcWid = {
 			mainContainer.appendChild(liCategories[ rootCategories[key] ]);
 		}
 		
+		
+	};
+	
+	EcWid.localize.price = function(price){
+		
+		/* изменим вид значения цены в соответствии с настройками магазина */
+			
+		// скорректируем разделитель
+		price = price + '';
+		price = price.replace('.', EcWid.shopProfile.currencyDecimalSeparator);
+					
+		return EcWid.shopProfile.currencyPrefix + price;		
 		
 	};

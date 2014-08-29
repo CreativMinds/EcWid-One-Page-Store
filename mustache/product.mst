@@ -19,7 +19,7 @@
 	'</div>		   '+
 
 	'<div class="prod-details">   '+
-	'<span class="title">Price:</span> <span class="price">${{product.price}}</span>   '+
+	'<span class="title">Price:</span> <span class="price">{{product.renderedPrice}}</span>   '+
 
 	'<ul class="prod-attributes">   '+
 	
