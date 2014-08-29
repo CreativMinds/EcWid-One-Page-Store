@@ -1,12 +1,5 @@
 /*
 
-	shop profile settings (objects + render functions)
-	dynamic styles and libs uploader
-	
-*/
-
-/*
-
 	Используемые библиотеки: 
 	1. underscore (должна подгружаться на странице клиента/владельца магазина, но можно
 	добавить и динамическую загрузку в метод ecwid.init)
@@ -836,7 +829,7 @@ var EcWid = {
 		/* изменим вид значения цены в соответствии с настройками магазина */
 			
 		// скорректируем разделитель
-		price = price + '';
+		price = price.toFixed(2);
 		price = price.replace('.', EcWid.shopProfile.currencyDecimalSeparator);
 					
 		return EcWid.shopProfile.currencyPrefix + price;		
