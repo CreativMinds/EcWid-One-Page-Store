@@ -6,7 +6,7 @@
 	'<div class="prod-image">   '+
 		
 		'<ul class="prod-categories">   '+
-			'<li>Категории:</li>	'+
+			'<li>Categories:</li>	'+
 			'{{#categoriesChain}}   '+
 				
 				'<li class="name" data-order="{{order}}">	'+

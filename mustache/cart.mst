@@ -7,10 +7,10 @@
 	'<table class="table table-stripped cart">	'+
 		'<tbody>	'+
 		'<tr class="header">	'+
-			'<th>Товар</th>	'+
-			'<th>Цена</th>	'+
-			'<th>Кол-во</th>	'+
-			'<th>Итого</th>	'+
+			'<th>Product</th>	'+
+			'<th>Price</th>	'+
+			'<th>Quantity</th>	'+
+			'<th>Total</th>	'+
 			'<th></th>	'+
 		'</tr>	'+
 		'</tbody>	'+
@@ -29,7 +29,7 @@
 			'<td>{{renderedPrice}}</td>	'+
 			'<td>{{quantity}}</td>	'+
 			'<td>{{totalPrice}}</td>	'+
-			'<td><button data-btn-type="delete" class="btn btn-default" data-item-id="{{id}}">Удалить</button></td>	'+
+			'<td><button data-btn-type="delete" class="btn btn-default" data-item-id="{{id}}">Delete</button></td>	'+
 		'</tr>	'+
 		'{{/cart}}	'+
 		'<tr class="footer">	'+

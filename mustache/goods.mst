@@ -5,7 +5,7 @@
 
 '{{>categoriesTpl}}' +
 
-'<span class="goods-title">Товары</span><ul class="goods floatfix"> '+
+'<span class="goods-title">Products</span><ul class="goods floatfix"> '+
 	'{{#products}} '+
 		'<li> '+
 			'<a href="#!/~/product/id={{id}}"><img src="{{imageUrl}}">{{name}}</a> '+

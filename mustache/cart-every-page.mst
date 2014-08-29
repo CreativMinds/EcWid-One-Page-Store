@@ -4,6 +4,6 @@
 <? echo $_GET['var']; ?> = ''+
 
 	'<a class="cart-holder" href="#!/~/cart/"><img src="i/cart.png" />    '+
-		'<div class="cart-every-page">Корзина (<span id="cart-goods-counter" data-block="cart-goods-counter">0</span>)'+
+		'<div class="cart-every-page">Cart (<span id="cart-goods-counter" data-block="cart-goods-counter">0</span>)'+
 		'</div>    '+
 	'</a>';

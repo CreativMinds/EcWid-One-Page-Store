@@ -2,7 +2,7 @@
 	header('Content-type: application/javascript');
 ?>
 <? echo $_GET['var']; ?> = ''+
-				'<span class="goods-title">Категории</span>'+
+				'<span class="goods-title">Categories</span>'+
 				'<ul class="goods floatfix"> '+
 					'{{#categories}} '+
 						'<li> '+
