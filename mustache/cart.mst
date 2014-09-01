@@ -16,7 +16,7 @@
 		'</tbody>	'+
 		'<tbody>	'+
 		'{{#cart}}	'+
-		'<tr id="{{id}}">	'+
+		'<tr id="{{id}}" data-cartUid="{{uid}}">	'+
 			'<td>	'+
 				'<img src="{{baseProduct.imageUrl}}" class="cartItemPhoto">	'+
 				'<a href="#!/~/product/id={{id}}"><b>{{baseProduct.name}}</b></a>	'+
@@ -29,7 +29,7 @@
 			'<td>{{renderedPrice}}</td>	'+
 			'<td>{{quantity}}</td>	'+
 			'<td>{{totalPrice}}</td>	'+
-			'<td><button data-btn-type="delete" class="btn btn-default" data-item-id="{{id}}">Delete</button></td>	'+
+			'<td><button data-btn-type="delete" class="btn btn-default" data-item-id="{{uid}}">Delete</button></td>	'+
 		'</tr>	'+
 		'{{/cart}}	'+
 		'<tr class="footer">	'+

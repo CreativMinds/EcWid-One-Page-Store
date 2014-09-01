@@ -591,12 +591,12 @@ var EcWid = {
 		function deleteProdItem(button){
 			
 			return function(){
-				
-				// удаляем из коризны
+								
+				// удаляем из корзины
 				EcWid.cart.remove( button.getAttribute('data-item-id') );
 				
 				// удаляем из dom
-				el = document.getElementById(button.getAttribute('data-item-id'));
+				el = document.querySelector('[data-cartUid="'+button.getAttribute('data-item-id')+'"]');
 				el.parentNode.removeChild(el);	
 				
 				// отображаем новую стоимость всех товаров корзины
@@ -614,22 +614,22 @@ var EcWid = {
 		
 	};
 	
-	EcWid.cart.remove = function(prodId){
+	EcWid.cart.remove = function(cartItemUid){
 	
 	
 		/* 
 			удаление товара из корзины 
-			prodId - id товара который удаляется
+			cartItemUid - уникальный id позиции товара в коризне который удаляется (не путать с id товара)
 		*/	
 		
-		prodId = parseInt(prodId); 	// изначально prodId имеет строковой тип, т.к значение берется 
-									// из аттрибутов dom элемента
+		cartItemUid = parseInt(cartItemUid); 	// изначально prodId имеет строковой тип, т.к значение берется 
+												// из аттрибутов dom элемента
 		
 		var key;
 		
 		for(key in this.items){
 
-			if(this.items[key].id === prodId){
+			if(this.items[key].uid === cartItemUid){
 
 				this.items.splice(key,1);
 			}
@@ -639,7 +639,28 @@ var EcWid = {
 		EcWid.cart.recounter();
 
 	};
-
+	
+	EcWid.cart.uniqId = function(items){
+	
+		
+		/* 
+			генерация случайного id для товаров в корзине 
+			items - товары которые уже находятся в корзине
+		*/
+		
+		var uid,
+			isUniq = false;
+		
+		while(isUniq === false){
+			
+			uid = Math.random() * 10000;
+		
+			_.findWhere(items, {uid: uid}) === undefined ? isUniq = true : isUniq = false;	
+		}	
+		
+		return parseInt( uid.toFixed(0) );	
+	};
+	
 	EcWid.cart.add = function(){
 	
 		
@@ -678,7 +699,7 @@ var EcWid = {
 		// узнаем заказанное кол-во
 		product.quantity = document.querySelector('.prod-details [name="quantity"]').value;
 		
-		// положим товар в корзину
+		// положим товар в корзину и присвоим ему уникальный id
 		if(localStorage.getItem('cart')) {
 		
 			this.items = JSON.parse(localStorage.getItem('cart'));
@@ -686,7 +707,9 @@ var EcWid = {
 		else{
 			this.items = [];
 		}
-	
+		
+		product.uid = this.uniqId(this.items);
+		
 		this.items.push(product);	
 		
 		// сохраним в local storage
