@@ -1,45 +1,44 @@
 div.cart-window{
-	width: 100%;
-	margin-top:30px;
-	background:#fff;
-	border-radius:5px;
-	padding:20px;
+width:100%;
+margin-top:30px;
+background:#fff;
+/*border-radius*/
+-webkit-border-radius:5px;
+   -moz-border-radius:5px;
+        border-radius:5px;
+padding:20px;
 }
-
 table.cart tr.header{
-	background:#eee !important;
+background:#eee !important;
 }
 table.cart tr.header th:first-child{
-	width:50%;
+width:50%;
 }
-
 table.cart tr td img.cartItemPhoto{
-	max-width:100px;
-	float: left;
-	margin-right:10px;
+max-width:100px;
+float:left;
+margin-right:10px;
 }
 table.cart tr td, table.cart tr th{
-	vertical-align: middle !important;
-	padding-top:10px;
-	padding-bottom:10px;
-	text-align: center;
+vertical-align:middle !important;
+padding-top:10px;
+padding-bottom:10px;
+text-align:center;
 }
 table.cart tr td:first-child, table.cart tr th:first-child{
-	text-align: left;
+text-align:left;
 }
 table.cart tr td b{
-	display: block;
-	padding-top:10px;
+display:block;
+padding-top:10px;
 }
 table.cart tr td div.item-options{
-	font-size:0.85em;
+font-size:0.85em;
 }
-
 table.cart>tbody+tbody{
-	border-top: 1px solid #ddd !important;
-	padding-top:5px;
+border-top:1px solid #ddd !important;
+padding-top:5px;
 }
-
 div.cart-btn a, div.cart-btn a:hover{
-	text-decoration:none;
+text-decoration:none;
 }
