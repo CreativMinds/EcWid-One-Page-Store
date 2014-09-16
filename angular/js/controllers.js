@@ -1,64 +1,74 @@
 var shopControllers = angular.module('shopControllers', []);
 
-
-shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', 'dataProvider', function($scope, $http, Cart, dataProvider){
+shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', 'dataProvider', 
+			   function($scope, $http, Cart, dataProvider){
 	
+	/* Контроллер главного окна, в котором находятся все остальные контроллеры */
+	
+	// узнаем кол-во товара в корзине
 	$scope.cartItemsAmount = Cart.getItemsCounter();
 	
+	// будем обновлять кол-во товара по мере того как он добавляется и удаляется из корзины
 	$scope.$on('cart:updated', function(event) {
 
-     $scope.cartItemsAmount = Cart.getItemsCounter();
+    	$scope.cartItemsAmount = Cart.getItemsCounter();
    
-   });
-		console.log( typeof dataProvider );
+	});
 	
-		dataProvider.getData('categories').then(function(data){
+	// ф-я темплейта которая будет определять является ли категория root
+	$scope.isRoot = function(item){
+		return item.parentId === undefined;
+	}
+	
+	// получим список всех категорий
+	dataProvider.getData('categories').then(function(dataCategories){
 	
 		var categories = {},
 			categoriesArray = [],
 			key;
 		
-		$scope.isRoot = function(item){
-			return item.parentId === undefined;
-		}
-		
 		// добавим каждому элементу категории свойство subCategories - массив в который положим обьекты дочерних
 		// категорий
-		for(key in data){
-			
-			categories[ data[key].id ] = data[key];
-			categories[ data[key].id ].subCategories = [];
-		}
-		
-		for(key in data){
-			
-			if(data[key].parentId){
+	
+			// создадим свойство
+			for(key in dataCategories){
 				
-				categories[ data[key].parentId ].subCategories.push( data[key] );
+				categories[ dataCategories[key].id ] = dataCategories[key];
+				categories[ dataCategories[key].id ].subCategories = [];
 			}
-			
-		}
 		
-		// обьект, содержащий обьекты категорий сконвертируем в массив содержащий обьекты категорий,
-		// чтобы иметь возможность применить к нему filter в ng-repeat
+			// поместим в него данные
+			for(key in dataCategories){
+				
+				if(dataCategories[key].parentId){
+					
+					categories[ dataCategories[key].parentId ].subCategories.push( dataCategories[key] );
+				}
+				
+			}
+		
+		// обьект, содержащий обьекты категорий, сконвертируем в массив содержащий обьекты категорий,
+		// делается это для того, чтобы иметь возможность применить к нему filter в ng-repeat
 		for(key in categories){
 			
 			categoriesArray.push( categories[key] );
 		}
 		
+		// и наконец сделаем категориии видимыми темплейтом
 		$scope.categories = categoriesArray;
-		console.log('categories...');
-		console.log($scope.categories);	
+
 	});
 	
 
 }]);
 
-
-shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', 'dataProvider', function($scope, $http, $routeParams, dataProvider){
+shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', 'dataProvider', 
+			   function($scope, $http, $routeParams, dataProvider){
+	
+	/* Контроллер страницы с товарами */
 	
 	var subCategories = [],
-		params = {};
+		params = {};			// хранит доп параметры передаваемые в dataProvider
 		
 	// определим категорию, для которой нужно отобразить товары
 	if($routeParams.category !== undefined) {
@@ -68,6 +78,7 @@ shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', '
 	}
 	
 	// вычленим суб категории текущей категории из массива хранящего все категории
+	// эти суб категории мы будем отображать на странице
 	$scope.$watch('categories',function(newValue, oldValue){
 			
 		$scope.subCategories = _.filter($scope.categories, function(item){
@@ -78,7 +89,7 @@ shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', '
 
 	});
 	
-	// загрузим товары категории, а также суб категории текущей категории и отобразим их
+	// загрузим товары
 	dataProvider.getData('products', params).then(function(data){
 		
 		$scope.products = data;
@@ -87,33 +98,30 @@ shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', '
 	
 }]);
 
-shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$http','Cart', 'dataProvider', function($scope, $routeParams, $http, Cart, dataProvider){
+shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$http','Cart', 'dataProvider', 
+			   function($scope, $routeParams, $http, Cart, dataProvider){
+	
+	/* Контроллер отвечает за отображение страницы с детальным описанием товара */
 		
-	var optionList = {},
-		params = {};
+	var optionList = {},	// хранит опции товара, которые выбрал пользователь (например color: red, size: x)
+		params = {};		// хранит доп параметры передаваемые в dataProvider
 	
 	$scope.productId = $routeParams.productId;
-	params.id = $routeParams.productId;
-
-	// загрузим данные о товаре
-	dataProvider.getData('product', params).then(function(data){
-		
-		$scope.product = data;
-	});
-	
 	$scope.quantity = 1;
-	
+
 	$scope.setOption = function(optName, optValue){
+		
+		// ф-я сохраняет опции товара, которые были выбраны пользователем/покупателем
 		
 		optionList[optName] = optValue;	
 		
-		console.log('setting option: ' + optName + ' = ' + optValue);
-		console.log(optionList);
 	};
 	
-	$scope.itemInCart = false;
-	
+	$scope.itemInCart = false;	// положен ли товар в корзину?
+
 	$scope.addToCart = function(){
+		
+		// добавление товара в корзину
 		
 		var product = {};
 		
@@ -126,21 +134,36 @@ shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$htt
 		
 		$scope.itemInCart = true;
 		
-		console.log('added to cart...');	
-		console.log(product);
 	};
+	
+	// загрузим данные о товаре
+	params.id = $routeParams.productId;
+
+	dataProvider.getData('product', params).then(function(data){
+		
+		$scope.product = data;
+	});
 	
 }]);
 
-shopControllers.controller('cartCtrl', ['$scope', 'Cart', function($scope, Cart){
-		
+shopControllers.controller('cartCtrl', ['$scope', 'Cart', 
+				function($scope, Cart){
+	
+	/* Контроллер отвечает за отображение корзины */
+	
+	// получим данные о товарах находящихся в корзине	
 	$scope.cartItems = Cart.getItems();
+	
+	// узнаем общую стоимость товаров в корзине
 	$scope.total = Cart.total();
-
+	
 	$scope.remove = function(itemUid){
+	
+		// ф-я удаления товара из корзины
+		
 		Cart.remove(itemUid);
 		$scope.total = Cart.total();
-		console.log('removed...');
+
 	}
 	
 }]);

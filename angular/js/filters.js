@@ -11,8 +11,6 @@ shopFilters.filter('profileCurrency', function($sce, shopProfile) {
     
 	var profileOptions = shopProfile.getOptions();
 	
-	//var profileOptions = {currencyPrefix: '$'};
-	
 	return profileOptions['currencyPrefix'] + input;
 	
   };
