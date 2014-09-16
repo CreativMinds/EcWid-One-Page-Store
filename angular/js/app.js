@@ -5,7 +5,9 @@ var shopApp = angular.module('shopApp',[
 	'shopServices',
 	'shopFactories',
 	'shopFilters',
-	'shopDirectives'
+	'shopDirectives',
+	'shopConstants',
+	'shopValues'
 ]);
 
 shopApp.config(['$routeProvider',

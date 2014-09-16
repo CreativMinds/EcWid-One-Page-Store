@@ -174,11 +174,11 @@ shopFactories.factory('shopProfile',function($http, $q, dataProvider){
 	
 });
 
-shopFactories.factory('dataProvider', function($http, $q){
+shopFactories.factory('dataProvider', function($http, $q, shopConfig){
 	
 	/* Получение данных от Api */
 	
-	var apiLink = 'http://appdev.ecwid.com/api/v1/5266003/';
+	var apiLink = shopConfig.apiUrl;
 		
 	var getData = function(controller, params){
 		

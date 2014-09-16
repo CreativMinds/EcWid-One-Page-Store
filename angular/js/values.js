@@ -1,1 +1,1 @@
-shopApp.value('Cache',{});
+var shopValues = angular.module('shopValues', []);
