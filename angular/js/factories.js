@@ -173,3 +173,43 @@ shopFactories.factory('shopProfile',function($http, $q){
 	};	
 	
 });
+
+shopFactories.factory('dataProvider', function($http, $q){
+	
+	var apiLink = 'http://appdev.ecwid.com/api/v1/5266003/';
+		
+	var getData = function(controller, params){
+		
+		/* Получение данных от Api сервера, вернем Promise обьект */
+		
+		var defer = $q.defer(),
+			paramString = '';
+
+		// сформируем строку параметров, если таковые переданы
+		if(params){
+				
+			for(key in params){
+					
+				if(params[key] !== null){
+					paramString += '&' + key + '=' + params[key];
+				}
+					
+			}
+		}
+		
+		// запрос к api
+		$http.jsonp(apiLink + controller + '?callback=JSON_CALLBACK' + paramString).success(function(data){
+			
+			defer.resolve(data);
+			
+		});
+		
+		return defer.promise;
+		
+	}	
+	
+	return {
+		getData: getData
+	}
+	
+});

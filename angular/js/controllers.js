@@ -1,6 +1,7 @@
 var shopControllers = angular.module('shopControllers', []);
 
-shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', function($scope, $http, Cart){
+
+shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', 'dataProvider', function($scope, $http, Cart, dataProvider){
 	
 	$scope.cartItemsAmount = Cart.getItemsCounter();
 	
@@ -9,9 +10,10 @@ shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', function($sco
      $scope.cartItemsAmount = Cart.getItemsCounter();
    
    });
+		console.log( typeof dataProvider );
 	
-	$http.jsonp('http://appdev.ecwid.com/api/v1/5266003/categories?callback=JSON_CALLBACK').success(function(data){
-		
+		dataProvider.getData('categories').then(function(data){
+	
 		var categories = {},
 			categoriesArray = [],
 			key;
@@ -46,78 +48,55 @@ shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', function($sco
 		
 		$scope.categories = categoriesArray;
 		console.log('categories...');
-		console.log($scope.categories);
-		
+		console.log($scope.categories);	
 	});
+	
+
 }]);
 
-shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams, Cache){
+
+shopControllers.controller('productsCtrl', ['$scope', '$http', '$routeParams', 'dataProvider', function($scope, $http, $routeParams, dataProvider){
 	
 	var subCategories = [],
-		reqUrl;
-	
-	// определим текущую категорию
-	if(!currentCategory) var currentCategory = null;
-	
+		params = {};
+		
+	// определим категорию, для которой нужно отобразить товары
 	if($routeParams.category !== undefined) {
-		
-		currentCategory = $routeParams.category;
-		reqUrl = 'http://appdev.ecwid.com/api/v1/5266003/products?callback=JSON_CALLBACK&category=' + currentCategory;
-
-		// вычленим суб категории из массива хранящего все категории
-		$scope.$watch('categories',function(newValue, oldValue){
-			
-			$scope.subCategories = _.filter($scope.categories, function(item){
-							
-				return currentCategory == item.parentId;	
-			});			
-			console.log('categories changed...');	
-		});
-
-		
-	} else {
-		 currentCategory = null;
-		 reqUrl = 'http://appdev.ecwid.com/api/v1/5266003/products?callback=JSON_CALLBACK';
-		 
-		// вычленим суб категории из массива хранящего все категории
-		$scope.$watch('categories', function(newValue, oldValue) {
-		
-			$scope.subCategories = _.filter($scope.categories, function(item){
-								
-					return undefined == item.parentId;	
-			});	
-			console.log('categories changed...');
-         });		
+	
+		params.category = $routeParams.category;
+	
 	}
 	
-	console.log('cur category: ' + currentCategory);
-	
-	console.log('sub cats...');
-	console.log($scope.subCategories);
-	console.log('cats...');
-	console.log($scope.categories);
-	
-	// загрузим товары категории, а также суб категории текущей категории и отобразим их
-	
-	$http.jsonp(reqUrl).success(function(data){
-		
-		console.log(data);
+	// вычленим суб категории текущей категории из массива хранящего все категории
+	$scope.$watch('categories',function(newValue, oldValue){
+			
+		$scope.subCategories = _.filter($scope.categories, function(item){
+			
+			// $routeParams.category может быть undefined для главной категории		
+			return $routeParams.category == item.parentId;	
+		});			
 
-		$scope.products = data;
-		
 	});
 	
+	// загрузим товары категории, а также суб категории текущей категории и отобразим их
+	dataProvider.getData('products', params).then(function(data){
+		
+		$scope.products = data;
+	});
+		
 	
 }]);
 
-shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$http','Cart', function($scope, $routeParams, $http, Cart){
-	
-	var optionList = {};
+shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$http','Cart', 'dataProvider', function($scope, $routeParams, $http, Cart, dataProvider){
+		
+	var optionList = {},
+		params = {};
 	
 	$scope.productId = $routeParams.productId;
-	
-	$http.jsonp('http://appdev.ecwid.com/api/v1/5266003/product?callback=JSON_CALLBACK&id=' + $routeParams.productId).
-	success(function(data){
+	params.id = $routeParams.productId;
+
+	// загрузим данные о товаре
+	dataProvider.getData('product', params).then(function(data){
 		
 		$scope.product = data;
 	});
@@ -154,7 +133,7 @@ shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$htt
 }]);
 
 shopControllers.controller('cartCtrl', ['$scope', 'Cart', function($scope, Cart){
-	
+		
 	$scope.cartItems = Cart.getItems();
 	$scope.total = Cart.total();
 
