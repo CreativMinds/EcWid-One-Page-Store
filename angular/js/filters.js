@@ -1,17 +1,27 @@
 var shopFilters = angular.module('shopFilters', []);
 
 shopFilters.filter('htmlTrusted', function($sce) {
-  return function(input) {
-    return $sce.trustAsHtml(input);
-  };
+
+	/* Используется в тех случаях, когда нужно встроить html полученный из модели в DOM */
+
+	return function(input) {
+
+		return $sce.trustAsHtml(input);
+
+	};
+
 });
 
 shopFilters.filter('profileCurrency', function($sce, shopProfile) {
-  return function(input) {
+	
+	/* Приведение цены к формату установленному в настройках магазина */
+	
+	return function(input) {
     
-	var profileOptions = shopProfile.getOptions();
+		var profileOptions = shopProfile.getOptions();
+		
+		return profileOptions['currencyPrefix'] + input;
 	
-	return profileOptions['currencyPrefix'] + input;
-	
-  };
+	};
+
 });

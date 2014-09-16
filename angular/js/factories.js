@@ -2,7 +2,9 @@ var shopFactories = angular.module('shopFactories', []);
 
 shopFactories.factory('Cart',function($rootScope){
 	
-	var items = [];		// массив товаров в корзине
+	/* Обьект для работы с корзиной */
+	
+	var items = [];		// кэш массива товаров в корзине
 	
 	var pullFromStorage = function(){
 		
@@ -93,12 +95,7 @@ shopFactories.factory('Cart',function($rootScope){
 	
 	var remove = function(itemUid){
 		
-		/* удаление товара из корзины */
-		
-		/*
-		itemUid = parseInt(itemUid); 	// изначально prodId имеет строковой тип, т.к значение берется 
-												// из аттрибутов dom элемента
-		*/		
+		/* удаление товара из корзины */	
 		
 		var key;
 		
@@ -113,12 +110,12 @@ shopFactories.factory('Cart',function($rootScope){
 		pushToStorage();
 		
 		$rootScope.$broadcast('cart:updated');
-				
-		console.log('removed totally...');		
 			
 	};
 
 	var getItemsCounter = function(){
+		
+		/* сколько товаров в корзине? */
 		
 		pullFromStorage();
 		
@@ -136,17 +133,21 @@ shopFactories.factory('Cart',function($rootScope){
 	
 });
 
-shopFactories.factory('shopProfile',function($http, $q){
-
+shopFactories.factory('shopProfile',function($http, $q, dataProvider){
+	
+	/* Обьект хранящий настройки магазина */
+	
 	var optionsCache = {};
 	
 	var getOptions = function(){
 		
-		if( Object.getOwnPropertyNames(optionsCache).length > 0 ) return optionsCache;
+		return optionsCache;
 
 	};
 	
 	var load = function(){
+		
+		/* ф-я загружает настройки и возвращает promise */
 		
 		var defer = $q.defer();
 		
@@ -156,13 +157,12 @@ shopFactories.factory('shopProfile',function($http, $q){
 			return defer.promise;
 		}
 		
-		$http.jsonp('http://appdev.ecwid.com/api/v1/5266003/profile?callback=JSON_CALLBACK').
-		success(function(data){
+		dataProvider.getData('profile').then(function(data){
 			
 			optionsCache = data;
-			
-			defer.resolve();
-		});			
+			defer.resolve();	
+					
+		});
 		
 		return defer.promise;
 	}
@@ -176,11 +176,22 @@ shopFactories.factory('shopProfile',function($http, $q){
 
 shopFactories.factory('dataProvider', function($http, $q){
 	
+	/* Получение данных от Api */
+	
 	var apiLink = 'http://appdev.ecwid.com/api/v1/5266003/';
 		
 	var getData = function(controller, params){
 		
-		/* Получение данных от Api сервера, вернем Promise обьект */
+		/*
+			Получение данных от Api сервера, вернем Promise обьект 
+			
+			controller - тип данных, которые мы хотим получить, в запросе идет после id магазина, например 
+				api/v1/5266003/categories?...
+				api/v1/5266003/products?...
+				здесь контроллеры это categories и products
+			params - параметры в виде обьекта, например {name: 'bob', lastname: 'bobster'} которые добавляются к
+					 GET запросу	
+		*/
 		
 		var defer = $q.defer(),
 			paramString = '';
