@@ -70,3 +70,28 @@ div.cart-every-page{
 	box-sizing:border-box;
 	line-height:32px;
 }
+
+#ecwid-shop{
+	margin-top: 30px;
+}
+
+.menu-holder{
+	background:#fff; 
+	border-radius: 4px;
+}
+
+.menu-holder .left-block{
+	width:80%; 
+	float: left;
+}
+
+.menu-holder .right-block{
+	width:20%; 
+	float: left;
+}
+
+.content-holder{
+	margin:30px 0px;
+	background: #fff;
+	padding: 5px;
+}

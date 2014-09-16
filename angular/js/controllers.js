@@ -122,7 +122,7 @@ shopControllers.controller('productDetailsCtrl', ['$scope', '$routeParams','$htt
 		$scope.product = data;
 	});
 	
-	$scope.quantity = 10;
+	$scope.quantity = 1;
 	
 	$scope.setOption = function(optName, optValue){
 		

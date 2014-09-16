@@ -1,5 +1,8 @@
-<ul class="goods floatfix">  
-	<li ng-repeat="category in subCategories"> 
-	<a href="#/products?category={{category.id}}"><img ng-if="category.thumbnailUrl" ng-src="{{category.thumbnailUrl}}"><img ng-if="!category.thumbnailUrl" src="" class="noimage">{{category.name}}</a> 
-	</li>  
-</ul>
+<div ng-show="subCategories">
+	<span class="goods-title">Categories</span>
+	<ul class="goods floatfix">  
+		<li ng-repeat="category in subCategories"> 
+		<a href="#/products?category={{category.id}}"><img ng-if="category.thumbnailUrl" ng-src="{{category.thumbnailUrl}}"><img ng-if="!category.thumbnailUrl" src="" class="noimage">{{category.name}}</a> 
+		</li>  
+	</ul>
+</div>

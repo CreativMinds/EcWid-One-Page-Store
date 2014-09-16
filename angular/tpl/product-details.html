@@ -4,14 +4,16 @@
 	
 		<ul class="prod-categories">   
 			<li>Categories:</li>	   
-			<li class="name" data-order="0">	<a href="#!/~/category/category=4613005">For Beginners</a></li>      
+			<li ng-repeat="subCat in product.categories track by $index" class="name" data-order="{{$index}}">	
+				<a href="#/products?category={{subCat.id}}">{{subCat.name}}</a>
+			</li>      
 		</ul>   
 		
 		<img ng-src="{{product.imageUrl}}">   
 	</div>		 
 	  
 	<div class="prod-details">   
-	<span class="title">Price:</span> <span class="price">{{product.price}}</span>   
+	<span class="title">Price:</span> <span class="price" ng-show="product.price !== undefined">{{product.price | profileCurrency}}</span>   
 	
 	<ul ng-if="product.attributes" class="prod-attributes">      
 		<li ng-repeat="attr in product.attributes">{{attr.name}}: {{attr.value}}</li>         

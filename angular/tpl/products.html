@@ -1,5 +1,8 @@
-<ul class="goods floatfix">  
-	<li ng-repeat="product in products"> <a href="#/product/{{product.id}}">
-		<img ng-src="{{product.thumbnailUrl}}">{{product.name}}</a> 
-	</li>  
-</ul>
+<div>
+	<span class="goods-title">Products</span>
+	<ul class="goods floatfix">  
+		<li ng-repeat="product in products"> <a href="#/product/{{product.id}}">
+			<img ng-src="{{product.thumbnailUrl}}">{{product.name}}</a> 
+		</li>  
+	</ul>
+</div>
