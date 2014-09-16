@@ -1,0 +1,50 @@
+.floatfix:before,
+.floatfix:after{
+content:" ";
+/* 1 */
+display:table;
+/* 2 */
+:;
+}
+.floatfix:after{
+clear:both;
+}
+body{
+background:#3c4e5a;
+font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+font-size:15px;
+line-height:21px;
+margin:0px;
+padding:0px;
+}
+div.centered{
+margin:0 auto;
+width:980px;
+padding:0;
+}
+.content-centered{
+text-align:center;
+}
+a.logo{
+#font-family:'Alfa Slab One', cursive;
+#font-family:'Fredericka the Great', cursive;
+#font-family:'Limelight', cursive;
+#font-family:'Holtwood One SC', serif;
+#font-family:'Fanwood Text', serif;
+font-size:2em;
+color:#fff;
+font-family:'Crafty Girls', cursive;
+text-decoration:none;
+}
+.logo-light-theme{
+color:#BF2C54 !important;
+font-weight:bold;
+}
+.body-light-theme{
+background:#eee;
+}
+span.slogan{
+display:block;
+font-family:'Crafty Girls', cursive;
+margin-top:10px;
+}

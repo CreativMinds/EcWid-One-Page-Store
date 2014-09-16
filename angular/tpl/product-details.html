@@ -1,0 +1,57 @@
+<div class="product-window floatfix">   
+	
+	<div class="prod-image">   <h1 class="prod-name">{{product.name}}</h1>	
+	
+		<ul class="prod-categories">   
+			<li>Categories:</li>	   
+			<li class="name" data-order="0">	<a href="#!/~/category/category=4613005">For Beginners</a></li>      
+		</ul>   
+		
+		<img ng-src="{{product.imageUrl}}">   
+	</div>		 
+	  
+	<div class="prod-details">   
+	<span class="title">Price:</span> <span class="price">{{product.price}}</span>   
+	
+	<ul ng-if="product.attributes" class="prod-attributes">      
+		<li ng-repeat="attr in product.attributes">{{attr.name}}: {{attr.value}}</li>         
+	</ul>    
+
+
+	<div ng-repeat="opt in product.options" class="prod-options" 
+			data-option-name="{{opt.name}}" 
+			data-option-type="{{opt.type}}" 
+			data-option-required="{{opt.required}}"
+	>   
+				
+		<span class="title">{{opt.name}}</span> <br>   
+			
+		<div ng-if="opt.type=='SELECT'">
+			<select name="{{opt.name}}" ng-model="optionValue" ng-change="setOption(opt.name, optionValue)" >
+				<option ng-repeat="choise in opt.choices" value="{{choise.text}}" 
+				data-price-modifier-type="{{choice.priceModifierType}}" 
+				data-price-modifier="{{choice.priceModifier}}">{{choise.text}}</option>   
+			</select>  				
+		</div>
+	
+	</div>
+	
+	<div>   
+		<span class="title">Quantity:</span>   <input class="quantity" type="number" name="quantity" ng-model="quantity" 
+		value="{{quantity}}" min="1">
+	</div>   
+	
+	<div class="cart-btn">   
+		<button class="btn btn-default" id="put-in-cart-btn" data-role="put-in-cart-btn" ng-click="addToCart()">В корзину</button>   
+		<div ng-show="itemInCart" class="cart-added-success">
+			Товар добавлен &#10004;<br />
+			<a href="#/cart">перейти в корзину</a>
+		</div> 
+	</div>   
+	
+	</div>   
+	
+	<div class="prod-description" ng-bind-html="product.description | htmlTrusted">
+		
+	</div>   
+</div>

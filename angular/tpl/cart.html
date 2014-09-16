@@ -1,0 +1,40 @@
+<div class="cart-window floatfix">	
+	<table class="table table-stripped cart">	
+		<tbody>	
+			<tr class="header">	
+				<th>Product</th>	
+				<th>Price</th>	
+				<th>Quantity</th>	
+				<th>Total</th>	
+				<th></th>	
+			</tr>	
+		</tbody>	
+		<tbody>		
+		<tr ng-repeat="item in cartItems track by item.uid" id="{{item.id}}" data-cartuid="{{item.uid}}">	
+			<td>	<img ng-src="{{item.baseProduct.thumbnailUrl}}" class="cartItemPhoto">	
+			<a href="#/product/{{item.id}}"><b>{{item.baseProduct.name}}</b></a>	
+			
+			<div class="item-options">	
+				<span ng-repeat="(optName, optValue) in item.optionList">{{optName}}: {{optValue}} <br /></span>	
+			</div>	
+			
+			</td>	
+			<td>{{item.baseProduct.price | profileCurrency}}</td>	
+			<td>{{item.quantity}}</td>	
+			<td>{{ item.quantity * item.baseProduct.price | profileCurrency}}</td>	
+			<td>
+				<button data-btn-type="delete" 
+						class="btn btn-default" 
+						data-item-id="{{item.uid}}"
+						ng-click="remove(item.uid)"
+				>Delete</button>
+			</td>	
+		</tr>		
+		<tr class="footer">	
+			<td colspan="3"></td>	
+			<td><span id="cartTotalPrice" data-block="cartTotalPrice">{{total | profileCurrency}}</span></td>	
+			<td></td>	
+		</tr>	
+		</tbody>	
+	</table>	
+</div>

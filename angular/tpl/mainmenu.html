@@ -1,0 +1,16 @@
+<ul id="dropdown-nav" class="dropdown">
+
+	<li ng-repeat="category in categories | filter:isRoot" data-categoryid="{{category.id}}">
+		<a href="#/products?category={{category.id}}">{{category.name}}</a>
+		
+		<ul ng-if="!category.parentId" data-parentid="{{category.parentId}}">
+		
+			<li ng-repeat="subcat in category.subCategories" data-categoryid="{{subcat.id}}">
+				<a href="#/products?category={{subcat.id}}">{{subcat.name}}</a>
+			</li>
+		
+		</ul>
+				
+	</li>
+
+</ul>

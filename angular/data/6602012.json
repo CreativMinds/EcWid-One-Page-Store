@@ -1,0 +1,89 @@
+{
+  "id": 6602012,
+  "sku": "00011",
+  "smallThumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810042.jpg",
+  "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810041.jpg",
+  "imageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810040.jpg",
+  "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810040.jpg",
+  "name": "JavaScript For Dummies",
+  "price": 75.1,
+  "wholesalePrices": {},
+  "weight": 0.2,
+  "url": "http://appdev.ecwid.com/store/5266003#!/~/product/id=6602012",
+  "description": "<ul style=\"margin-top: 1.12em; margin-right: 0px; margin-left: 20px; padding: 0px; color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px; margin-bottom: 0px !important;\">\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">Responding to reader feedback, the author has thoroughly revamped the book with more step-by-step coverage of JavaScript basics, an exclusive focus on Internet Explorer, and many complete sample scripts</li>\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">Updated to cover JavaScript 1.5, the latest release of this popular Web scripting language</li>\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">Using lots of examples, including a sample working Web site, the book shows how to create dynamic and interactive pages, build entire sites, and automate pages</li>\n</ul>",
+  "options": [
+    {
+      "name": "Papercover",
+      "type": "SELECT",
+      "choices": [
+        {
+          "text": "softcover",
+          "priceModifierType": "PERCENT",
+          "priceModifier": 0.0
+        },
+        {
+          "text": "hardcover",
+          "priceModifierType": "PERCENT",
+          "priceModifier": 5.0
+        }
+      ],
+      "defaultChoice": 0,
+      "required": false
+    }
+  ],
+  "taxes": [],
+  "galleryImages": [],
+  "categories": [
+    {
+      "id": 4613005,
+      "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810035.jpg",
+      "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810035.jpg",
+      "name": "For Beginners",
+      "url": "http://appdev.ecwid.com/store/5266003#!/~/category/id=4613005",
+      "description": "<p><strong>Book set for beginners</strong></p>",
+      "defaultCategory": true,
+      "productCount": 9
+    },
+    {
+      "id": 4645004,
+      "parentId": 4613005,
+      "name": "Never Programmed Before",
+      "url": "http://appdev.ecwid.com/store/5266003#!/~/category/id=4645004",
+      "description": "",
+      "defaultCategory": false,
+      "productCount": 1
+    }
+  ],
+  "dateAdded": 1408022184,
+  "created": "2014-08-14 08:16:24",
+  "productType": "Общий",
+  "attributes": [
+    {
+      "id": "1316002",
+      "value": "Dummies",
+      "name": "Бренд",
+      "internalName": "Brand"
+    },
+    {
+      "id": "1316006",
+      "value": "384",
+      "name": "Paperback"
+    },
+    {
+      "id": "1316007",
+      "value": "For Dummies; 4 edition",
+      "name": "Publisher"
+    },
+    {
+      "id": "1596020",
+      "value": "English",
+      "name": "Language"
+    }
+  ],
+  "productClassId": 0,
+  "enabled": true,
+  "favorites": {
+    "count": 0,
+    "displayedCount": "0"
+  }
+}

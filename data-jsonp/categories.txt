@@ -1,0 +1,45 @@
+EcWid.getCategories([
+  {
+    "id": 4613007,
+    "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810039.jpg",
+    "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810039.jpg",
+    "name": "For masters",
+    "url": "http://appdev.ecwid.com/store/5266003#!/For-masters/c/4613007",
+    "description": "",
+    "productCount": 5
+  },
+  {
+    "id": 4613006,
+    "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810037.jpg",
+    "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810037.jpg",
+    "name": "For intermediates",
+    "url": "http://appdev.ecwid.com/store/5266003#!/For-intermediates/c/4613006",
+    "description": "<p><strong>For an advanced developers</strong></p>",
+    "productCount": 4
+  },
+  {
+    "id": 4613005,
+    "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810035.jpg",
+    "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810035.jpg",
+    "name": "For Beginners",
+    "url": "http://appdev.ecwid.com/store/5266003#!/For-Beginners/c/4613005",
+    "description": "<p><strong>Book set for beginners</strong></p>",
+    "productCount": 9
+  },
+  {
+    "id": 4645005,
+    "parentId": 4613005,
+    "name": "Minimum expirience",
+    "url": "http://appdev.ecwid.com/store/5266003#!/Minimum-expirience/c/4645005",
+    "description": "",
+    "productCount": 3
+  },
+  {
+    "id": 4645004,
+    "parentId": 4613005,
+    "name": "Never Programmed Before",
+    "url": "http://appdev.ecwid.com/store/5266003#!/Never-Programmed-Before/c/4645004",
+    "description": "",
+    "productCount": 1
+  }
+])

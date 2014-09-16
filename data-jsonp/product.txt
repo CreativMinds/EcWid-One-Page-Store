@@ -1,0 +1,74 @@
+EcWid.getProduct({
+  "id": 6602016,
+  "sku": "00015",
+  "smallThumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810062.jpg",
+  "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810061.jpg",
+  "imageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810060.jpg",
+  "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810060.jpg",
+  "name": "A Software Engineer Learns HTML5, JavaScript and jQuery",
+  "price": 27.0,
+  "wholesalePrices": {},
+  "weight": 0.2,
+  "url": "http://appdev.ecwid.com/store/5266003#!/A-Software-Engineer-Learns-HTML5-JavaScript-and-jQuery/p/6602016",
+  "description": "<div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"><b>24 May 2014: New revision is now available.</b> Fully revised and re-edited.</div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\">HTML5 web applications are now capable of matching or exceeding the scale and sophistication of desktop applications, but with the unique advantage of running natively inside the web browsers on billions of desktop computers, phones, TVs and tablets.</div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\">This revolution (or more correctly - evolution) has happened for a number of reasons:</div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\">\n<ul style=\"margin-top: 1.12em; margin-right: 0px; margin-left: 20px; padding: 0px; margin-bottom: 0px !important;\">\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">Browsers have introduced new standards-based APIs allowing web applications to (amongst other things) store data offline, retrieve data from the server dynamically, spawn background processes and interact with the filesystem.</li>\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">Software engineers and programmers have begun to think of the much maligned JavaScript language in a new light, and unlock its potential as a rich and expressive language capable of producing large scale, well-structured applications.</li>\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">The jQuery library has eased the pain of interacting with Document Object Model, and therefore writing applications that dynamically respond to user interaction.</li>\n<li style=\"margin: 0px 0px 0px 20px; word-wrap: break-word;\">The HTML markup language has been overhauled and extended to provide more semantic meaning, and many additional elements and attributes.</li>\n</ul>\n</div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"><b>A Software Engineer Learns HTML5, JavaScript and jQuery</b> guides you through the process I went through as an experienced software engineer, writing a large-scale, standards based web-application for the first time. It is intended to teach you the fundamentals of HTML5, JavaScript and jQuery - without presenting you with long lists of APIs, or intricate details of every feature (these can be found in reference manuals).</div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\">This book is not a simple introduction to the subject matter: it guides you through the process of building a feature-rich web application. The application begins simple, and becomes gradually more complex as additional APIs and features are introduced. This book includes the following content:</div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"></div>\n<div style=\"color: #333333; font-family: Arial, sans-serif; line-height: 22.399999618530273px;\"><ol style=\"color: #888888; margin: 0px 0px 18px 22px; padding: 0px;\">\n<li style=\"margin: 0px; word-wrap: break-word;\">An introduction to the HTML5 markup language, and how it differs from HTML4 and XHTML. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">An introduction to JavaScript, including an in-depth look at its use of objects and functions, along with the design patterns that support the development of robust web applications. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">An introduction to jQuery selection, traversal, manipulation and events. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">An in-depth look at the Web storage and IndexedDB APIs for client side data storage. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">A guide to implementing offline web applications with the Application Cache API. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">An introduction to the ways JavaScript can interact with the users file-system using the FileReader API. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">A guide to the use of Web Workers in web applications. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">An introduction to AJAX, and the jQuery API supporting AJAX. </li>\n<li style=\"margin: 0px; word-wrap: break-word;\">An introduction to Server Sent Events and Web Sockets. </li>\n</ol>\n<div>This book is intended for anyone with at least a superficial knowledge of HTML and programming (in any language).</div>\n</div>\n</div>",
+  "options": [
+    {
+      "name": "Papercover",
+      "type": "SELECT",
+      "choices": [
+        {
+          "text": "softcover",
+          "priceModifierType": "PERCENT",
+          "priceModifier": 0.0
+        },
+        {
+          "text": "hardcover",
+          "priceModifierType": "PERCENT",
+          "priceModifier": 5.0
+        }
+      ],
+      "defaultChoice": 0,
+      "required": false
+    }
+  ],
+  "taxes": [],
+  "galleryImages": [],
+  "categories": [
+    {
+      "id": 4613007,
+      "thumbnailUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810039.jpg",
+      "originalImageUrl": "http://d2lxjqhgprkmgp.cloudfront.net/images/5266003/6810039.jpg",
+      "name": "For masters",
+      "url": "http://appdev.ecwid.com/store/5266003#!/For-masters/c/4613007",
+      "description": "",
+      "defaultCategory": true,
+      "productCount": 5
+    }
+  ],
+  "dateAdded": 1408008519,
+  "created": "2014-08-14 04:28:39",
+  "productType": "Общий",
+  "attributes": [
+    {
+      "id": "1316006",
+      "value": "640",
+      "name": "Paperback"
+    },
+    {
+      "id": "1316007",
+      "value": "Wiley; 1 edition (June 30, 2014)",
+      "name": "Publisher"
+    },
+    {
+      "id": "1596020",
+      "value": "English",
+      "name": "Language"
+    }
+  ],
+  "productClassId": 0,
+  "enabled": true,
+  "favorites": {
+    "count": 0,
+    "displayedCount": "0"
+  }
+})
