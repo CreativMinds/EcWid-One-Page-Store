@@ -15,7 +15,7 @@ Requirements
 Docs
 ====
 
-Description of methods and configuration parametrs is in js/ecwid.js
+Description of methods and configuration parameters is in js/ecwid.js
 
 Demo
 ====
