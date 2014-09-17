@@ -56,6 +56,8 @@ shopControllers.controller('mainCtrl', ['$scope', '$http', 'Cart', 'dataProvider
 		
 		// и наконец сделаем категориии видимыми темплейтом
 		$scope.categories = categoriesArray;
+		
+		console.log(categoriesArray);
 
 	});
 	

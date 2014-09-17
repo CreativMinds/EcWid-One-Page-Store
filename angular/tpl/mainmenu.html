@@ -1,13 +1,19 @@
+<script type="text/ng-template"  id="tree_style.html">
+	<li ng-repeat="category in category.subCategories" data-categoryid="{{category.id}}">
+		<a href="#/products?category={{category.id}}">{{category.name}}</a>
+		<ul ng-if="category.subCategories.length > 0" ng-include="'tree_style.html'">
+
+		</ul>		
+	</li>
+</script>
+
 <ul id="dropdown-nav" class="dropdown">
 
 	<li ng-repeat="category in categories | filter:isRoot" data-categoryid="{{category.id}}">
 		<a href="#/products?category={{category.id}}">{{category.name}}</a>
 		
-		<ul ng-if="!category.parentId" data-parentid="{{category.parentId}}">
-		
-			<li ng-repeat="subcat in category.subCategories" data-categoryid="{{subcat.id}}">
-				<a href="#/products?category={{subcat.id}}">{{subcat.name}}</a>
-			</li>
+		<ul ng-if="category.subCategories.length > 0" ng-include="'tree_style.html'">
+
 		
 		</ul>
 				
