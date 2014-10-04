@@ -4,6 +4,7 @@ EcWid One Page Store
 This is an EcWid One Page Store (javascript based application that lets you embed a store in any page of your site without making almost any changes).
 
 JS engine of this app is in js/ecwid.js
+AngularJS version in here - angular/ 
 
 
 Requirements
@@ -16,9 +17,10 @@ Docs
 ====
 
 Description of methods and configuration parameters is in js/ecwid.js
+Angular version in here - angular/ dir.
 
 Demo
 ====
 
-You can see how it works on http://bookjs.ru/ and angular version is here http://bookjs.ru/angular
+Not available now
 
