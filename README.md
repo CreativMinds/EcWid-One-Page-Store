@@ -22,5 +22,6 @@ Angular version in here - angular/ dir.
 Demo
 ====
 
-Not available now
+Demo of the angular version http://bookjs.ru/angular 
+NOTE: my ecwid api key expired, so there is only one prouct in the store that has description, and if you click on any products in the shop you will see detailed description of just that one product. Just try and you'll see.
 
