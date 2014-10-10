@@ -23,5 +23,5 @@ Demo
 ====
 
 Demo of the angular version http://bookjs.ru/angular 
-NOTE: my ecwid api key expired, so there is only one prouct in the store that has description, and if you click on any products in the shop you will see detailed description of just that one product. Just try and you'll see.
+NOTE: my ecwid api key expired, so there is only one prouct in the store that has description, and if you click on any products in the shop you will see detailed description of just that one product. Same for categories, navigation through categories works as expected only with active api key. Just try and you'll see.
 
